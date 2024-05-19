@@ -28,14 +28,15 @@ print(gpt4_tokenizer_ids)
 
 # open some text and train a vocab of 512 tokens
 # filename = "taylorswift" # fast test - 15 seconds
-filename = "egg" # fast test - 15 seconds
+filename = "egg" # fast test - 20 seconds
 # filename = "input"     # slow test - 115 seconds
 text = open("tests/" + filename + ".txt", "r", encoding="utf-8").read()
 
 # create a directory for models, so we don't pollute the current directory
 os.makedirs("models", exist_ok=True)
 
-for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTokenizer"]):
+# for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTokenizer"]):
+for TokenizerClass, name in zip([RegexTokenizer, CapitalSpaceOutTokenizer], ["RegExTokenizer", "CapitalSpaceOutTokenizer"]):
     print(f"Tokenizer {name} training on {filename}.txt:")
     t0 = time.time()
     # construct the Tokenizer object and kick off verbose training
