@@ -61,19 +61,6 @@ def test_encode_decode_identity_verbose(tokenizer_factory, text1, text2, text3):
     decoded = tokenizer.decode(ids)
     assert text == decoded
 
-# test encode/decode identity for a lot of edge cases on space
-# @pytest.mark.parametrize("tokenizer_factory", [CapitalSpaceOutTokenizer]) # [BasicTokenizer, RegexTokenizer, GPT4Tokenizer, CapitalSpaceOutTokenizer])
-@pytest.mark.parametrize("tokenizer_factory", [BasicTokenizer, RegexTokenizer, GPT4Tokenizer, CapitalSpaceOutTokenizer])
-@pytest.mark.parametrize("text1", ["", " ", "  ", "   ", "    ", "     ", "a", "b", "c", " a", "a ", " a ", "a a", "aa", " aa ", "a  a", "a   a", "a     a", "aaa", "aaaa", "ab", "abc", "abcd"])
-@pytest.mark.parametrize("text2", ["", " ", "  ", "   ", "    ", "     ", "a", "b", "c", " a", "a ", " a ", "a a", "aa", " aa ", "a  a", "a   a", "a     a", "aaa", "aaaa", "ab", "abc", "abcd"])
-@pytest.mark.parametrize("text3", ["", " ", "  ", "   ", "    ", "     ", "a", "b", "c", " a", "a ", " a ", "a a", "aa", " aa ", "a  a", "a   a", "a     a", "aaa", "aaaa", "ab", "abc", "abcd"])
-def test_encode_decode_identity_Egg(tokenizer_factory, text1, text2, text3):
-    text = text1 + text2 + text3
-    tokenizer = tokenizer_factory()
-    ids = tokenizer.encode(text)
-    decoded = tokenizer.decode(ids)
-    assert text == decoded
-
 # test encode/decode identity for a few different strings
 @pytest.mark.parametrize("tokenizer_factory", [BasicTokenizer, RegexTokenizer, GPT4Tokenizer, CapitalSpaceOutTokenizer])
 @pytest.mark.parametrize("text", test_strings)

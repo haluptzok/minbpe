@@ -13,13 +13,38 @@ todo list:
 8> Make capital_space_out.py work with new token indexes, 10M * space_index
 9> Merge tokens preserving the Capitalization and Space information
 
-
-
 Tokenization papers to compare with:
 https://medium.com/@bradneysmith/tokenization-llms-from-scratch-1-cedc9f72de4e
 https://arxiv.org/html/2404.17808v1
 https://arxiv.org/abs/2402.18376
 
+https://tiktokenizer.vercel.app/?model=gpt-4o
+<|im_start|>system<|im_sep|>You are a helpful assistant<|im_end|><|im_start|>user<|im_sep|>egg egg egg
+Egg Egg Egg
+EGG EGG EGG
+<|im_end|><|im_start|>assistant<|im_sep|>
+200264, 17360, 200266, 3575, 553, 261, 10297, 29186, 200265, 200264, 1428, 200266, 72126, 16102, 16102, 198, 109379, 52711, 52711, 198, 21389, 38, 457, 43469, 457, 43469, 198, 200265, 200264, 173781, 200266
+egg egg egg
+Egg Egg Egg
+EGG EGG EGG
+72126, 16102, 16102, 198, 109379, 52711, 52711, 198, 21389, 38, 457, 43469, 457, 43469, 198
+
+https://tiktokenizer.vercel.app/?model=meta-llama%2FMeta-Llama-3-8B
+<|im_start|>system<|im_sep|>You are a helpful assistant<|im_end|><|im_start|>user<|im_sep|>egg egg egg
+Egg Egg Egg
+EGG EGG EGG
+<|im_end|><|im_start|>assistant<|im_sep|>
+27, 91, 318, 5011, 91, 29, 9125, 27, 91, 318, 55875, 91, 29, 2675, 527, 264, 11190, 18328, 27, 91, 318, 6345, 91, 1822, 91, 318, 5011, 91, 29, 882, 27, 91, 318, 55875, 91, 29, 29468, 19151, 19151, 198, 36, 14736, 42313, 42313, 198, 9560, 38, 469, 23050, 469, 23050, 198, 27, 91, 318, 6345, 91, 1822, 91, 318, 5011, 91, 29, 78191, 27, 91, 318, 55875, 91, 29
+egg egg egg
+Egg Egg Egg
+EGG EGG EGG
+29468, 19151, 19151, 198, 36, 14736, 42313, 42313, 198, 9560, 38, 469, 23050, 469, 23050, 198
+
+https://tiktokenizer.vercel.app/?model=google%2Fgemma-7b
+egg egg egg
+Egg Egg Egg
+EGG EGG EGG
+2, 53892, 13514, 13514, 108, 55834, 36223, 36223, 108, 235291, 14798, 189148, 189148, 108
 
 Minimal (byte-level) Byte Pair Encoding tokenizer that strips out capitalization and spaces.
 

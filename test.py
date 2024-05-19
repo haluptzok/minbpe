@@ -2,10 +2,29 @@
 Train our Tokenizers on some data, just to see them in action.
 The whole thing runs in ~25 seconds on my laptop.
 """
-
 import os
 import time
-from minbpe import BasicTokenizer, RegexTokenizer, CapitalSpaceOutTokenizer
+import tiktoken
+from minbpe import BasicTokenizer, RegexTokenizer, GPT4Tokenizer, CapitalSpaceOutTokenizer
+
+egg_test_string = '''
+egg egg egg
+Egg Egg Egg
+EGG EGG EGG
+'''
+text = egg_test_string
+tokenizer = GPT4Tokenizer()
+enc = tiktoken.get_encoding("cl100k_base")
+tiktoken_ids = enc.encode(text)
+tiktoken_str = enc.decode(tiktoken_ids)
+gpt4_tokenizer_ids = tokenizer.encode(text)
+gpt4_tokenizer_str = tokenizer.decode(gpt4_tokenizer_ids)
+assert gpt4_tokenizer_ids == tiktoken_ids
+assert gpt4_tokenizer_str == tiktoken_str
+print("GPT4 Tokenizer on egg_test_string:")
+print(text)
+print(gpt4_tokenizer_ids)
+exit()
 
 # open some text and train a vocab of 512 tokens
 filename = "taylorswift" # fast test - 15 seconds
