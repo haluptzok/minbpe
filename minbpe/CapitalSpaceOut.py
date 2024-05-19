@@ -1,5 +1,6 @@
 """
 todo list:
+0> Why does tokenization help - what is the logprob of the tokenized text compared to original text just using bigrams?
 1> Understand the code
 2> Understand the test code - how to invoke it
 3> Add test.py to test the code
@@ -11,6 +12,13 @@ todo list:
 7> Make capital_space_out.py work with new token indexes, 1M * capital_index
 8> Make capital_space_out.py work with new token indexes, 10M * space_index
 9> Merge tokens preserving the Capitalization and Space information
+
+
+
+Tokenization papers to compare with:
+https://arxiv.org/html/2404.17808v1
+https://arxiv.org/abs/2402.18376
+
 
 Minimal (byte-level) Byte Pair Encoding tokenizer that strips out capitalization and spaces.
 
