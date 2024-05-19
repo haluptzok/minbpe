@@ -8,20 +8,21 @@ import time
 from minbpe import BasicTokenizer, RegexTokenizer, CapitalSpaceOutTokenizer
 
 # open some text and train a vocab of 512 tokens
-# text = open("tests/taylorswift.txt", "r", encoding="utf-8").read() # fast test - 15 seconds
-text = open("tests/input.txt", "r", encoding="utf-8").read() # slow test - 115 seconds
+filename = "taylorswift" # fast test - 15 seconds
+# filename = "input"     # slow test - 115 seconds
+text = open("tests/" + filename + ".txt", "r", encoding="utf-8").read()
 
 # create a directory for models, so we don't pollute the current directory
 os.makedirs("models", exist_ok=True)
 
-t0 = time.time()
 for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTokenizer"]):
+    t0 = time.time()
     # construct the Tokenizer object and kick off verbose training
     tokenizer = TokenizerClass()
     tokenizer.train(text, 512, verbose=True)
     # writes two files in the models directory: name.model, and name.vocab
     prefix = os.path.join("models", name)
     tokenizer.save(prefix)
-t1 = time.time()
-
-print(f"Training took {t1 - t0:.2f} seconds")
+    t1 = time.time()
+    print(f"Training {name} took {t1 - t0:.2f} seconds")
+    # Tokenize some text and print the resulting tokens

@@ -16,6 +16,7 @@ todo list:
 
 
 Tokenization papers to compare with:
+https://medium.com/@bradneysmith/tokenization-llms-from-scratch-1-cedc9f72de4e
 https://arxiv.org/html/2404.17808v1
 https://arxiv.org/abs/2402.18376
 
