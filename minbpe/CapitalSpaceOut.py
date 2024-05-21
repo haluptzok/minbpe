@@ -171,6 +171,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
 
         # iteratively merge the most common pairs to create new tokens
         merges = {} # (int, int) -> int
+        cs_merges = {} # (int, int) -> (int, int, int)  # (token, capitalization, space)
         vocab = {idx: bytes([idx]) for idx in range(256)} # idx -> bytes
         for i in range(num_merges):
             # count the number of times every consecutive pair appears
