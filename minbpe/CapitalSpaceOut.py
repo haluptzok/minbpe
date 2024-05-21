@@ -52,15 +52,35 @@ Text can be represented as a single stream of lowercase and upper case character
 Or text can be represted as two streams, one stream of all charcters mapped to lower-case, and another stream specfying if the character was originally upper-case.
 The allows egg/Egg/EGG to be represented as the same token, sharing the same embedding.
 The extra stream contains tokens that represent 3 states: 
-    0 for all lower-case
-    1 for capitalized meaning first letter upper-case
-    2 for all upper-case.
+    +0 million for all lower-case
+    +1 million for all all-caps (including a single upper cased letter)
+    +2 million for capitalized meaning just the first letter upper-case
+    +3 million is a mish-mash of upper and lower case - we can only store 1 type of mish-mash in the decode table, and skip the other types of mish-mash.
+
 The transformer using this tokenizer needs to input and output the extra stream of capitalization tokens.
 On the input side there is an embedding for the 3 states which is added in just like the positional encoding.
 On the output side the extra stream of tokens requires a separate softmax layer to predict the 3 states of the output token.
 This potentially reduces the number of tokens in the vocabulary by a factor of 3, for the price of 3 extra embeddings and a separate softmax layer.
 So for the same sized embedding layer, the model can have a much larger vocabulary effectively, and have better generalization to less common words.
 For example uncommon EGG and common egg would share the same embedding, and the model would learn to predict the correct capitalization based on the context.
+When merging 2 tokens, if both are lower-case, the result is lower-case.
+When merging 2 tokens, if both are all-caps, the result is all-caps.
+When merging 2 tokens, if the left one is capitalized (or all caps single letter) and the right one is lower-case, the result is capitalized.
+When merging 2 tokens, if the nice case doesn't occur, the result is mish-mash, we store the 1 most common type of mish-mash in the table, and skip the other types of mish-mash.
+For mish-mash when decoding, the decoding table will specify the left and right token types.
+So when merging tokens - the all-lower, all-upper, and capitalized tokens are merged as expected and specified by the extra stream of tokens.
+But if the merging tokens aren't of one of those types - we pick the most common type of all the tokens we could merge, and put their types in the decoding table.
+And we assign the merged tokens "mish-mash" type, and all the other matches of different mish-mash don't get merged and are skipped.
+In this way, the entry in the table is:
+i phone -> iphone + lower tag
+I PHONE -> iphone + upper tag
+I phone -> iphone + cap tag
+i Phone -> iphone + mish-mash tag, specify in the decode table (lower tag, cap tag), taking most common type of all the possible mish-mash merges.
+i pHone -> skipped in merging, we can only store in the table 1 type of mish-mash.  This could get merged in a later round of merging.
+Also could only create the mish-mash when it's unique, as an option, the mish-mash could be skipped, and the tokens not merged, unless it's unique.
+Because the mish-mash embedding may not be adequate to represent all the possible meanings for different combinations of capitalization.
+
+Failure case - you need iPhone != iphone != iPHONE != Iphone
 
 Text can be represented as a single stream of characters with spaces interspersed.
 Or text can be represented as two streams, one stream of all characters, and another stream specifying if a space occurs before or after character.
@@ -118,12 +138,10 @@ Along with effectively getting a longer context window by getting more merging d
 import regex as re
 from .base import Tokenizer, get_stats, merge
 
-
 # the main GPT text split patterns, see
 # https://github.com/openai/tiktoken/blob/main/tiktoken_ext/openai_public.py
 GPT2_SPLIT_PATTERN = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
 GPT4_SPLIT_PATTERN = r"""'(?i:[sdmt]|ll|ve|re)|[^\r\n\p{L}\p{N}]?+\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]++[\r\n]*|\s*[\r\n]|\s+(?!\S)|\s+"""
-
 
 class CapitalSpaceOutTokenizer(Tokenizer):
 
@@ -148,6 +166,8 @@ class CapitalSpaceOutTokenizer(Tokenizer):
 
         # input text preprocessing
         ids = [list(ch.encode("utf-8")) for ch in text_chunks]
+
+        # map every upper case character to lower-case + 1 million
 
         # iteratively merge the most common pairs to create new tokens
         merges = {} # (int, int) -> int
