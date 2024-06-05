@@ -1,13 +1,14 @@
 """
 todo list:
-0> Why does tokenization help - what is the logprob of the tokenized text compared to original text just using bigrams?
+Done: 0> Why does tokenization help - what is the logprob of the tokenized text compared to original text just using bigrams?
+    If the text was completely uniform, then tokenization wouldn't help at all.  But if the text has some structure, then tokenization should help.
 1> Understand the code
-2> Understand the test code - how to invoke it
-3> Add test.py to test the code
-4> Add test case to test.py to the count of tokens for egg, Egg, EGG example from Karpathy on all tokenizers
-5> Make capital_space_out.py work with no changes - just new names
-6> Add test capital_space_out.py to test the code and test.py
-6> Make tokenization create tuples of (token, capitalization, space) instead of just token - check it works.
+Done: 2> Understand the test code - how to invoke it
+Done: 3> Add test.py to test the code
+Done: 4> Add test case to test.py to the count of tokens for egg, Egg, EGG example from Karpathy on all tokenizers
+Done: 5> Make capital_space_out.py work with no changes - just new names
+Done: 6> Add test capital_space_out.py to test the code and test.py
+6> Make tokenization create tokens = token + 1M * capitalization + 10M * space.  Instead of just token - check it works.
 6> Make space and capitalization indepenent of each other - both or neither can be invoked.
 7> Make capital_space_out.py work with new token indexes, 1M * capital_index
 8> Make capital_space_out.py work with new token indexes, 10M * space_index
@@ -53,9 +54,9 @@ Or text can be represted as two streams, one stream of all charcters mapped to l
 The allows egg/Egg/EGG to be represented as the same token, sharing the same embedding.
 The extra stream contains tokens that represent 3 states: 
     +0 million for all lower-case
-    +1 million for all all-caps (including a single upper cased letter)
-    +2 million for capitalized meaning just the first letter upper-case
-    +3 million is a mish-mash of upper and lower case - we can only store 1 type of mish-mash in the decode table, and skip the other types of mish-mash.
+    +1 million for capitalized meaning just the first letter upper-case (including a single upper cased letter)
+    +2 million for all all-caps
+    +3 million is a mish-mash of upper and lower case - we can only store 1 type of mish-mash in the decode table, so skip the other types of mish-mash when merging
 
 The transformer using this tokenizer needs to input and output the extra stream of capitalization tokens.
 On the input side there is an embedding for the 3 states which is added in just like the positional encoding.
@@ -150,16 +151,20 @@ import unicodedata
 # -----------------------------------------------------------------------------
 # a few helper functions useful for both BasicTokenizer and RegexTokenizer
 
-def get_stats(ids, counts=None):
+def get_stats(ids, counts=None, counts_m=None):
     """
     Given a list of integers, return a dictionary of counts of consecutive pairs
     Example: [1, 2, 3, 1, 2] -> {(1, 2): 2, (2, 3): 1, (3, 1): 1}
     Optionally allows to update an existing dictionary of counts
     """
-    counts = {} if counts is None else counts
+    counts = {} if counts is None else counts          # counts of consecutive pairs
+    counts_m = {} if counts_m is None else counts_m    # counts of consecutive pairs modulo 1_000_000
     for pair in zip(ids, ids[1:]): # iterate consecutive elements
         counts[pair] = counts.get(pair, 0) + 1
-    return counts
+        pair_m = (pair[0] % 1_000_000, pair[1] % 1_000_000)
+        counts_m[pair_m] = counts_m.get(pair_m, 0) + 1
+
+    return counts # , counts_m
 
 
 def merge(ids, pair, idx):
@@ -323,7 +328,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         self.special_tokens = {}
         self.inverse_special_tokens = {}
 
-    def train(self, text, vocab_size, verbose=False):
+    def train(self, text, vocab_size, verbose=True):
         assert vocab_size >= 256
         num_merges = vocab_size - 256
 
@@ -333,12 +338,13 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         # input text preprocessing
         ids = [list(ch.encode("utf-8")) for ch in text_chunks]
         # map every upper case character to lower-case + 1 million
-        # ids = [[c + 100000 if 65 <= c <= 90 else c for c in chunk] for chunk in ids]
+        ids = [[c + 1_000_000 + (97-65) if 65 <= c <= 90 else c for c in chunk] for chunk in ids]
 
         # iteratively merge the most common pairs to create new tokens
         merges = {} # (int, int) -> int
-        cs_merges = {} # (int, int) -> (int, int, int)  # (token, capitalization, space)
-        vocab = {idx: bytes([idx]) for idx in range(256)} # idx -> bytes
+        # cs_merges = {} # (int, int) -> (int, int, int)  # (token, capitalization, space)
+        # Need to map tokens above 1_000_000 back to their folded token
+        vocab = {idx: bytes([idx % 1_000_000]) for idx in (list(range(256)) + list(range(1_000_097, 1_000_123)))} # idx -> bytes
         for i in range(num_merges):
             # count the number of times every consecutive pair appears
             stats = {}

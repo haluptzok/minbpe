@@ -59,7 +59,11 @@ for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTok
     tokenizer_str = tokenizer.decode(tokenizer_ids)
     assert tokenizer_str == egg_test_string
     print(f"Tokenizer {name} on {filename}.txt:")
+    print(egg_test_string)
+    tokenizer_ids = tokenizer.encode(egg_test_string)
     print(tokenizer_ids)
+    tokenizer_str = tokenizer.decode(tokenizer_ids)
     print(tokenizer_str)
     t1 = time.time()
     print(f"Testing {name} took {t1 - t0:.2f} seconds")
+    print(tokenizer.vocab)
