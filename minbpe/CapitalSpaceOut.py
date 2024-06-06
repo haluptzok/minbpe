@@ -161,7 +161,9 @@ def get_stats(ids, counts=None, counts_m=None):
     counts_m = {} if counts_m is None else counts_m    # counts of consecutive pairs modulo 1_000_000
     for pair in zip(ids, ids[1:]): # iterate consecutive elements
         counts[pair] = counts.get(pair, 0) + 1
-        pair_m = (pair[0] % 1_000_000, pair[1] % 1_000_000)
+        item_0 = pair[0] % 1_000_000
+        item_1 = pair[1] % 1_000_000
+        pair_m = (item_0, item_1)
         counts_m[pair_m] = counts_m.get(pair_m, 0) + 1
 
     return counts # , counts_m
@@ -336,21 +338,32 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         text_chunks = re.findall(self.compiled_pattern, text)
 
         # input text preprocessing
-        ids = [list(ch.encode("utf-8")) for ch in text_chunks]
         # map every upper case character to lower-case + 1 million
-        ids = [[c + 1_000_000 + (97-65) if 65 <= c <= 90 else c for c in chunk] for chunk in ids]
+        ids = []
+        for chunk in text_chunks:
+            ids_piece = []
+            for c in chunk:
+                if 65 <= ord(c) <= 90:
+                    ids_piece.append(ord(c) + 1_000_000 + (97-65))
+                else:
+                    ids_piece += list(c.encode("utf-8"))
+            ids.append(ids_piece)
 
         # iteratively merge the most common pairs to create new tokens
         merges = {} # (int, int) -> int
         # cs_merges = {} # (int, int) -> (int, int, int)  # (token, capitalization, space)
         # Need to map tokens above 1_000_000 back to their folded token
-        vocab = {idx: bytes([idx % 1_000_000]) for idx in (list(range(256)) + list(range(1_000_097, 1_000_123)))} # idx -> bytes
+        vocab = {idx: bytes([idx]) for idx in range(256)} # idx -> bytes
+        for idx in range(1_000_097, 1_000_123):
+            vocab[idx] = bytes([idx - 1_000_000 - (97-65)]) # map back to lower-case
+
         for i in range(num_merges):
             # count the number of times every consecutive pair appears
             stats = {}
+            stats_m = {}
             for chunk_ids in ids:
                 # passing in stats will update it in place, adding up counts
-                get_stats(chunk_ids, stats)
+                get_stats(chunk_ids, stats, stats_m)
             # find the pair with the highest count
             pair = max(stats, key=stats.get)
             # mint a new token: assign it the next available id
@@ -388,10 +401,10 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         text = text_bytes.decode("utf-8", errors="replace")
         return text
 
-    def _encode_chunk(self, text_bytes):
+    def _encode_chunk(self, ids):
         # return the token ids
         # let's begin. first, convert all bytes to integers in range 0..255
-        ids = list(text_bytes)
+        # ids = list(text_bytes)
         while len(ids) >= 2:
             # find the pair with the lowest merge index
             stats = get_stats(ids)
@@ -414,8 +427,13 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         # all chunks of text are encoded separately, then results are joined
         ids = []
         for chunk in text_chunks:
-            chunk_bytes = chunk.encode("utf-8") # raw bytes
-            chunk_ids = self._encode_chunk(chunk_bytes)
+            ids_chunk = []
+            for c in chunk:
+                if 65 <= ord(c) <= 90:
+                    ids_chunk.append(ord(c) + 1_000_000 + (97-65))
+                else:
+                    ids_chunk.extend(list(c.encode("utf-8")))
+            chunk_ids = self._encode_chunk(ids_chunk)
             ids.extend(chunk_ids)
         return ids
 
