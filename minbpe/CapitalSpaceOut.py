@@ -428,7 +428,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         self.special_tokens = special_tokens
         self.inverse_special_tokens = {v: k for k, v in special_tokens.items()}
 
-    def decode_raw(self, ids):
+    def decode_recursive(self, ids):
         # given ids (list of integers), return Python string
         part_bytes = []
         for idx in ids:
@@ -441,7 +441,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
                 # ALLCAPS_OFFSET -> ALLCAPS_OFFSET, ALLCAPS_OFFSET
                 # CAPITALIZED_OFFSET -> CAPITALIZED_OFFSET, LOWERCASE_OFFSET
                 # MISHMASH_OFFSET -> Table lookup, Table lookup - whatever was merged together in the table is preserved.
-                part_bytes += self.decode_raw(self.raw_vocab[idx])
+                part_bytes += self.decode_recursive(self.raw_vocab[idx])
             elif idx in self.inverse_special_tokens:
                 part_bytes.append(self.inverse_special_tokens[idx].encode("utf-8"))
             else:
@@ -454,7 +454,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         for idx in ids:
             if idx in self.vocab:
                 # part_bytes.append(self.vocab[idx])
-                part_bytes += self.decode_raw([idx])
+                part_bytes += self.decode_recursive([idx])
             elif idx in self.inverse_special_tokens:
                 part_bytes.append(self.inverse_special_tokens[idx].encode("utf-8"))
             else:
@@ -471,7 +471,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             # find the pair with the lowest merge index
             stats = {}
             stats_m = {}
-            stats = get_stats(ids, stats, stats_m)
+            get_stats(ids, stats, stats_m)
             pair = min(stats, key=lambda p: self.merges.get(p, float("inf")))
             # pair = min(stats_m, key=lambda p: self.merges.get(p, float("inf")))
             # subtle: if there are no more merges available, the key will
