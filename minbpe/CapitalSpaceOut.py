@@ -57,7 +57,14 @@ The extra stream contains tokens that represent 3 states:
     +1 million for capitalized meaning just the first letter upper-case (including a single upper cased letter)
     +2 million for all all-caps
     +3 million is a mish-mash of upper and lower case - we can only store 1 type of mish-mash in the decode table, so skip the other types of mish-mash when merging
-
+"""
+LETTER_OFFSETS     = 1_000_000
+LOWERCASE_OFFSET   = 0          # 1 or more lower case letters
+UPPERCASE_OFFSET   = 1_000_000  # 1 capital letter
+CAPITALIZED_OFFSET = 2_000_000  # 1 capital letter followed by 1 or more lower case letters
+ALLCAPS_OFFSET     = 3_000_000  # 2 or more capital letters
+MISHMASH_OFFSET    = 4_000_000  # 2 or more mix of capital and lower case letters in non-standard way
+"""
 The transformer using this tokenizer needs to input and output the extra stream of capitalization tokens.
 On the input side there is an embedding for the 3 states which is added in just like the positional encoding.
 On the output side the extra stream of tokens requires a separate softmax layer to predict the 3 states of the output token.
@@ -161,8 +168,8 @@ def get_stats(ids, counts=None, counts_m=None):
     counts_m = {} if counts_m is None else counts_m    # counts of consecutive pairs modulo 1_000_000
     for pair in zip(ids, ids[1:]): # iterate consecutive elements
         counts[pair] = counts.get(pair, 0) + 1
-        item_0 = pair[0] % 1_000_000
-        item_1 = pair[1] % 1_000_000
+        item_0 = pair[0] % LETTER_OFFSETS
+        item_1 = pair[1] % LETTER_OFFSETS
         pair_m = (item_0, item_1)
         counts_m[pair_m] = counts_m.get(pair_m, 0) + 1
 
@@ -177,14 +184,41 @@ def merge(ids, pair, idx):
     """
     newids = []
     i = 0
-    while i < len(ids):
-        # if not at the very last position AND the pair matches, replace it
-        if ids[i] == pair[0] and i < len(ids) - 1 and ids[i+1] == pair[1]:
-            newids.append(idx)
+    while i < len(ids) - 1:
+        # pair has the value without the millions added on
+        # if not at the very last position AND the pair matches, replace it.
+        if ids[i] == (pair[0] + LOWERCASE_OFFSET) and ids[i+1] == (pair[1] + LOWERCASE_OFFSET):
+            newids.append(idx + LOWERCASE_OFFSET)
             i += 2
+            """
+        elif ids[i] == (pair[0] + UPPERCASE_OFFSET) and ids[i+1] == (pair[1] + LOWERCASE_OFFSET):
+            newids.append(idx + CAPITALIZED_OFFSET)
+            i += 2
+        elif ids[i] == (pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (pair[1] + LOWERCASE_OFFSET):
+            newids.append(idx + CAPITALIZED_OFFSET)
+            i += 2
+        elif ids[i] == (pair[0] + UPPERCASE_OFFSET) and ids[i+1] == (pair[1] + UPPERCASE_OFFSET):
+            newids.append(idx + ALLCAPS_OFFSET)
+            i += 2
+        elif ids[i] == (pair[0] + UPPERCASE_OFFSET) and ids[i+1] == (pair[1] + ALLCAPS_OFFSET):
+            newids.append(idx + ALLCAPS_OFFSET)
+            i += 2
+        elif ids[i] == (pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (pair[1] + UPPERCASE_OFFSET):
+            newids.append(idx + ALLCAPS_OFFSET)
+            i += 2
+        elif ids[i] == (pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (pair[1] + ALLCAPS_OFFSET):
+            newids.append(idx + ALLCAPS_OFFSET)
+            i += 2
+        #!!! Mish-mash case NEEDS TO BE HANDLED HERE - find which is the most common mish-mash and store it in the table for decoding
+        # List out the 25 mish-mash cases, and pick the most common one, and store it in the table for decoding.  Comment out the cases already handled.
+        """
         else:
             newids.append(ids[i])
             i += 1
+
+    if i == len(ids) - 1:
+        newids.append(ids[-1])
+
     return newids
 
 # first two helper functions...
@@ -354,8 +388,12 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         # cs_merges = {} # (int, int) -> (int, int, int)  # (token, capitalization, space)
         # Need to map tokens above 1_000_000 back to their folded token
         vocab = {idx: bytes([idx]) for idx in range(256)} # idx -> bytes
+        raw_vocab = {idx: [idx] for idx in range(256)} # idx -> list of ids
+        vocab_cnt_ids = {idx: 1 for idx in range(256)} # idx -> count of ids
         for idx in range(1_000_097, 1_000_123):
             vocab[idx] = bytes([idx - 1_000_000 - (97-65)]) # map back to lower-case
+            raw_vocab[idx] = [idx - 1_000_000 - (97-65)]    # map back to lower-case
+            vocab_cnt_ids[idx] = 1
 
         for i in range(num_merges):
             # count the number of times every consecutive pair appears
@@ -372,14 +410,17 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             ids = [merge(chunk_ids, pair, idx) for chunk_ids in ids]
             # save the merge
             merges[pair] = idx
+            raw_vocab[idx] = [pair[0], pair[1]]
             vocab[idx] = vocab[pair[0]] + vocab[pair[1]]
+            vocab_cnt_ids[idx] = vocab_cnt_ids[pair[0]] + vocab_cnt_ids[pair[1]]
             # prints
             if verbose:
                 print(f"merge {i+1}/{num_merges}: {pair} -> {idx} ({vocab[idx]}) had {stats[pair]} occurrences")
 
         # save class variables
         self.merges = merges # used in encode()
-        self.vocab = vocab   # used in decode()
+        self.vocab = vocab   # used in decode() - 1 shot decoding to the whole string
+        self.raw_vocab = raw_vocab # used in decode() - recursive decoding to the individual tokens
 
     def register_special_tokens(self, special_tokens):
         # special_tokens is a dictionary of str -> int
@@ -387,12 +428,33 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         self.special_tokens = special_tokens
         self.inverse_special_tokens = {v: k for k, v in special_tokens.items()}
 
+    def decode_raw(self, ids):
+        # given ids (list of integers), return Python string
+        part_bytes = []
+        for idx in ids:
+            if idx < 256: # it's done
+                part_bytes.append(self.vocab[idx]) # bytes
+            elif idx in self.vocab: # it's a merged token - recurse on it
+                # Pass down the case markings on appropriately
+                # LOWERCASE_OFFSET -> LOWERCASE_OFFSET, LOWERCASE_OFFSET
+                # UPPERCASE_OFFSET -> UPPERCASE_OFFSET, UPPERCASE_OFFSET # this shouldn't happen, UPPERCASE is only a concept
+                # ALLCAPS_OFFSET -> ALLCAPS_OFFSET, ALLCAPS_OFFSET
+                # CAPITALIZED_OFFSET -> CAPITALIZED_OFFSET, LOWERCASE_OFFSET
+                # MISHMASH_OFFSET -> Table lookup, Table lookup - whatever was merged together in the table is preserved.
+                part_bytes += self.decode_raw(self.raw_vocab[idx])
+            elif idx in self.inverse_special_tokens:
+                part_bytes.append(self.inverse_special_tokens[idx].encode("utf-8"))
+            else:
+                raise ValueError(f"invalid token id: {idx}")
+        return part_bytes
+
     def decode(self, ids):
         # given ids (list of integers), return Python string
         part_bytes = []
         for idx in ids:
             if idx in self.vocab:
-                part_bytes.append(self.vocab[idx])
+                # part_bytes.append(self.vocab[idx])
+                part_bytes += self.decode_raw([idx])
             elif idx in self.inverse_special_tokens:
                 part_bytes.append(self.inverse_special_tokens[idx].encode("utf-8"))
             else:
@@ -407,8 +469,11 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         # ids = list(text_bytes)
         while len(ids) >= 2:
             # find the pair with the lowest merge index
-            stats = get_stats(ids)
+            stats = {}
+            stats_m = {}
+            stats = get_stats(ids, stats, stats_m)
             pair = min(stats, key=lambda p: self.merges.get(p, float("inf")))
+            # pair = min(stats_m, key=lambda p: self.merges.get(p, float("inf")))
             # subtle: if there are no more merges available, the key will
             # result in an inf for every single pair, and the min will be
             # just the first pair in the list, arbitrarily
@@ -429,8 +494,9 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         for chunk in text_chunks:
             ids_chunk = []
             for c in chunk:
+                # fold the upper-case into lower-case
                 if 65 <= ord(c) <= 90:
-                    ids_chunk.append(ord(c) + 1_000_000 + (97-65))
+                    ids_chunk.append(ord(c) + UPPERCASE_OFFSET + (97-65))
                 else:
                     ids_chunk.extend(list(c.encode("utf-8")))
             chunk_ids = self._encode_chunk(ids_chunk)

@@ -41,7 +41,7 @@ for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTok
     t0 = time.time()
     # construct the Tokenizer object and kick off verbose training
     tokenizer = TokenizerClass()
-    tokenizer.train(text, 512)
+    tokenizer.train(text, 300) # tokenizer.train(text, 512)
     # writes two files in the models directory: name.model, and name.vocab
     prefix = os.path.join("models", name)
     tokenizer.save(prefix)
