@@ -48,22 +48,23 @@ for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTok
     t1 = time.time()
     print(f"Training {name} took {t1 - t0:.2f} seconds")
     t0 = time.time()
-    # test we can tokenize and detokenize the training sets exactly
-    for training_set in ["egg", "input", "taylorswift"]:
-        training_text = open("tests/" + training_set + ".txt", "r", encoding="utf-8").read()
-        tokenizer_ids = tokenizer.encode(training_text)
-        tokenizer_str = tokenizer.decode(tokenizer_ids)
-        assert tokenizer_str == training_text
     # test we can tokenize and detokenize the egg_test_string exactly
     tokenizer_ids = tokenizer.encode(egg_test_string)
     tokenizer_str = tokenizer.decode(tokenizer_ids)
-    assert tokenizer_str == egg_test_string
     print(f"Tokenizer {name} on {filename}.txt:")
     print(egg_test_string)
     tokenizer_ids = tokenizer.encode(egg_test_string)
     print(tokenizer_ids)
     tokenizer_str = tokenizer.decode(tokenizer_ids)
     print(tokenizer_str)
+    assert tokenizer_str == egg_test_string
+    # test we can tokenize and detokenize the training sets exactly
+    for training_set in ["egg", "input", "taylorswift"]:
+        print(f"Testing {name} on {training_set}.txt:")
+        training_text = open("tests/" + training_set + ".txt", "r", encoding="utf-8").read()
+        tokenizer_ids = tokenizer.encode(training_text)
+        tokenizer_str = tokenizer.decode(tokenizer_ids)
+        assert tokenizer_str == training_text
     t1 = time.time()
     print(f"Testing {name} took {t1 - t0:.2f} seconds")
     print(tokenizer.vocab)

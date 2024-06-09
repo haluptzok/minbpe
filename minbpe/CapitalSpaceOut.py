@@ -60,10 +60,9 @@ The extra stream contains tokens that represent 3 states:
 """
 LETTER_OFFSETS     = 1_000_000
 LOWERCASE_OFFSET   = 0          # 1 or more lower case letters
-UPPERCASE_OFFSET   = 1_000_000  # 1 capital letter
-CAPITALIZED_OFFSET = 2_000_000  # 1 capital letter followed by 1 or more lower case letters
-ALLCAPS_OFFSET     = 3_000_000  # 2 or more capital letters
-MISHMASH_OFFSET    = 4_000_000  # 2 or more mix of capital and lower case letters in non-standard way
+CAPITALIZED_OFFSET = 1_000_000  # 1 capital letter followed by 0 or more lower case letters
+ALLCAPS_OFFSET     = 2_000_000  # 2 or more capital letters
+MISHMASH_OFFSET    = 3_000_000  # 2 or more mix of capital and lower case letters in non-standard way
 """
 The transformer using this tokenizer needs to input and output the extra stream of capitalization tokens.
 On the input side there is an embedding for the 3 states which is added in just like the positional encoding.
@@ -191,19 +190,16 @@ def merge(ids, pair, idx):
             newids.append(idx + LOWERCASE_OFFSET)
             i += 2
             """
-        elif ids[i] == (pair[0] + UPPERCASE_OFFSET) and ids[i+1] == (pair[1] + LOWERCASE_OFFSET):
-            newids.append(idx + CAPITALIZED_OFFSET)
-            i += 2
         elif ids[i] == (pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (pair[1] + LOWERCASE_OFFSET):
             newids.append(idx + CAPITALIZED_OFFSET)
             i += 2
-        elif ids[i] == (pair[0] + UPPERCASE_OFFSET) and ids[i+1] == (pair[1] + UPPERCASE_OFFSET):
+        elif ids[i] == (pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (pair[1] + CAPITALIZED_OFFSET) and self.vocab_cnt_ids[pair[0]] == 1 and self.vocab_cnt_ids[pair[1]] == 1:
             newids.append(idx + ALLCAPS_OFFSET)
             i += 2
-        elif ids[i] == (pair[0] + UPPERCASE_OFFSET) and ids[i+1] == (pair[1] + ALLCAPS_OFFSET):
+        elif ids[i] == (pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (pair[1] + ALLCAPS_OFFSET) and self.vocab_cnt_ids[pair[0]] == 1:
             newids.append(idx + ALLCAPS_OFFSET)
             i += 2
-        elif ids[i] == (pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (pair[1] + UPPERCASE_OFFSET):
+        elif ids[i] == (pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (pair[1] + CAPITALIZED_OFFSET) and self.vocab_cnt_ids[pair[1]] == 1:
             newids.append(idx + ALLCAPS_OFFSET)
             i += 2
         elif ids[i] == (pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (pair[1] + ALLCAPS_OFFSET):
@@ -421,6 +417,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         self.merges = merges # used in encode()
         self.vocab = vocab   # used in decode() - 1 shot decoding to the whole string
         self.raw_vocab = raw_vocab # used in decode() - recursive decoding to the individual tokens
+        self.vocab_cnt_ids = vocab_cnt_ids # used in decode() - recursive decoding to the individual tokens
 
     def register_special_tokens(self, special_tokens):
         # special_tokens is a dictionary of str -> int
@@ -432,20 +429,40 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         # given ids (list of integers), return Python string
         part_bytes = []
         for idx in ids:
-            if idx < 256: # it's done
-                part_bytes.append(self.vocab[idx]) # bytes
-            elif idx in self.vocab: # it's a merged token - recurse on it
-                # Pass down the case markings on appropriately
-                # LOWERCASE_OFFSET -> LOWERCASE_OFFSET, LOWERCASE_OFFSET
-                # UPPERCASE_OFFSET -> UPPERCASE_OFFSET, UPPERCASE_OFFSET # this shouldn't happen, UPPERCASE is only a concept
-                # ALLCAPS_OFFSET -> ALLCAPS_OFFSET, ALLCAPS_OFFSET
-                # CAPITALIZED_OFFSET -> CAPITALIZED_OFFSET, LOWERCASE_OFFSET
-                # MISHMASH_OFFSET -> Table lookup, Table lookup - whatever was merged together in the table is preserved.
-                part_bytes += self.decode_recursive(self.raw_vocab[idx])
-            elif idx in self.inverse_special_tokens:
-                part_bytes.append(self.inverse_special_tokens[idx].encode("utf-8"))
+            idx_base = idx % LETTER_OFFSETS
+            idx_cap = idx // LETTER_OFFSETS
+            if self.vocab_cnt_ids[idx_base] == 1:
+                    if idx_base >= 97 and idx_base <= 122 and idx_cap != LOWERCASE_OFFSET:
+                        # make it upper case letter
+                        part_bytes.append(self.vocab[idx_base - (97 - 65)])
+                    else:
+                        part_bytes.append(self.vocab[idx_base])
+            elif idx_base in self.vocab:
+                # !!! to support mish-mash, we need to store the mish-mash in the table, so zero out the caps markings when copying out of the table when not mish-mash.
+                # it's a merged token - recurse on it - pass down the case markings
+                if idx_cap == LOWERCASE_OFFSET:
+                    # LOWERCASE_OFFSET -> LOWERCASE_OFFSET, LOWERCASE_OFFSET
+                    part_bytes += self.decode_recursive(self.raw_vocab[idx])
+                elif idx_cap == CAPITALIZED_OFFSET:
+                    # CAPITALIZED_OFFSET -> CAPITALIZED_OFFSET, LOWERCASE_OFFSET
+                    recurse_ids = self.raw_vocab[idx].copy()
+                    recurse_ids[0] += CAPITALIZED_OFFSET
+                    recurse_ids[1] += LOWERCASE_OFFSET
+                    part_bytes += self.decode_recursive(recurse_ids)
+                elif idx_cap == ALLCAPS_OFFSET:
+                    # ALLCAPS_OFFSET -> ALLCAPS_OFFSET, ALLCAPS_OFFSET
+                    recurse_ids = self.raw_vocab[idx].copy()
+                    recurse_ids[0] += ALLCAPS_OFFSET
+                    recurse_ids[1] += ALLCAPS_OFFSET
+                    part_bytes += self.decode_recursive(recurse_ids)
+                else:
+                    # MISHMASH_OFFSET -> Table lookup, Table lookup - whatever was merged together in the table is preserved.
+                    assert idx_cap == MISHMASH_OFFSET
+                    # !!! handle MISHMASH_OFFSET later !!!
+                    print(f"Skipping mish-mash token: {idx_base} {idx_cap} {self.vocab_cnt_ids[idx_base]}")
+                    part_bytes += self.decode_recursive(self.raw_vocab[idx])
             else:
-                raise ValueError(f"invalid token id: {idx}")
+                raise ValueError(f"decode_recursive invalid token id: {idx} {idx_base} {idx_cap} {self.vocab_cnt_ids[idx_base]}")
         return part_bytes
 
     def decode(self, ids):
@@ -496,7 +513,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             for c in chunk:
                 # fold the upper-case into lower-case
                 if 65 <= ord(c) <= 90:
-                    ids_chunk.append(ord(c) + UPPERCASE_OFFSET + (97-65))
+                    ids_chunk.append(ord(c) + CAPITALIZED_OFFSET + (97-65))
                 else:
                     ids_chunk.extend(list(c.encode("utf-8")))
             chunk_ids = self._encode_chunk(ids_chunk)
