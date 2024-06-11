@@ -374,7 +374,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             ids_piece = []
             for c in chunk:
                 if 65 <= ord(c) <= 90:
-                    ids_piece.append(ord(c) + 1_000_000 + (97-65))
+                    ids_piece.append(ord(c) + CAPITALIZED_OFFSET + (97-65))
                 else:
                     ids_piece += list(c.encode("utf-8"))
             ids.append(ids_piece)
@@ -389,14 +389,6 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         self.vocab = vocab   # used in decode() - 1 shot decoding to the whole string
         self.raw_vocab = raw_vocab # used in decode() - recursive decoding to the individual tokens
         self.vocab_cnt_ids = vocab_cnt_ids # used in decode() - recursive decoding to the individual tokens
-        # capitalized letters are mapped to lower case + CAPITALIZED_OFFSET, need to map them back in decode.
-        #!!!! Do we really even need this - don't we check in decode if the token is capitalized, and then map it back to upper case?
-        '''
-        for idx in range(1_000_097, 1_000_123):
-            vocab[idx] = bytes([idx - 1_000_000 - (97-65)]) # map back to upper-case
-            raw_vocab[idx] = [idx - 1_000_000 - (97-65)]    # map back to upper-case
-            vocab_cnt_ids[idx] = 1
-        '''
         for i in range(num_merges):
             # count the number of times every consecutive pair appears
             stats = {}
@@ -434,7 +426,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             idx_cap = idx - idx_base
             if self.vocab_cnt_ids[idx_base] == 1:
                     if idx_base >= 97 and idx_base <= 122 and idx_cap != LOWERCASE_OFFSET:
-                        # make it upper case letter
+                        # make CAPITALIZED and ALLCAPS into an upper case letter
                         part_bytes.append(self.vocab[idx_base - (97 - 65)])
                     else:
                         part_bytes.append(self.vocab[idx_base])
