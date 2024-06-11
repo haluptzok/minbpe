@@ -439,13 +439,16 @@ class CapitalSpaceOutTokenizer(Tokenizer):
                     else:
                         part_bytes.append(self.vocab[idx_base])
             elif idx_base in self.vocab:
-                # !!! to support mish-mash, we need to store the mish-mash in the table, so zero out the caps markings when copying out of the table when not mish-mash.
-                # it's a merged token - recurse on it - pass down the case markings
+                # It's a merged token - recurse on it - pass down the case markings properly
+                # To support mish-mash, we store the mish-mash character markings in the recursive_vocab table
+                # So zero out the caps markings when copying out of the table when not mish-mash.
                 if idx_cap == LOWERCASE_OFFSET:
                     # LOWERCASE_OFFSET -> LOWERCASE_OFFSET, LOWERCASE_OFFSET
                     recurse_ids = [self.raw_vocab[idx_base][0] % LETTER_OFFSETS, self.raw_vocab[idx_base][1] % LETTER_OFFSETS]
-                    # part_bytes += self.decode_recursive(recurse_ids)
-                    part_bytes += self.decode_recursive(self.raw_vocab[idx_base])
+                    recurse_ids[0] += LOWERCASE_OFFSET
+                    recurse_ids[1] += LOWERCASE_OFFSET
+                    part_bytes += self.decode_recursive(recurse_ids)
+                    # part_bytes += self.decode_recursive(self.raw_vocab[idx_base])
                 elif idx_cap == CAPITALIZED_OFFSET:
                     # CAPITALIZED_OFFSET -> CAPITALIZED_OFFSET, LOWERCASE_OFFSET
                     recurse_ids = [self.raw_vocab[idx_base][0] % LETTER_OFFSETS, self.raw_vocab[idx_base][1] % LETTER_OFFSETS]
@@ -461,8 +464,6 @@ class CapitalSpaceOutTokenizer(Tokenizer):
                 else:
                     # MISHMASH_OFFSET -> Table lookup, Table lookup - whatever was merged together in the table is preserved.
                     assert idx_cap == MISHMASH_OFFSET
-                    # print(f"mish-mash token: {idx_base} {idx_cap} {self.vocab_cnt_ids[idx_base]}")
-                    # recurse_ids = [self.raw_vocab[idx_base][0] % LETTER_OFFSETS, self.raw_vocab[idx_base][1] % LETTER_OFFSETS]
                     part_bytes += self.decode_recursive(self.raw_vocab[idx_base])
             else:
                 raise ValueError(f"decode_recursive invalid token id: {idx} {idx_base} {idx_cap} {self.vocab_cnt_ids[idx_base]}")
