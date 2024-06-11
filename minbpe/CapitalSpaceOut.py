@@ -143,7 +143,6 @@ Along with effectively getting a longer context window by getting more merging d
 """
 
 import regex as re
-# from .base import Tokenizer, get_stats, merge
 
 """
 Contains the base Tokenizer class and a few common helper functions.
@@ -164,7 +163,7 @@ def get_stats(ids, counts=None, counts_m=None):
     Optionally allows to update an existing dictionary of counts
     """
     counts = {} if counts is None else counts          # counts of consecutive pairs
-    counts_m = {} if counts_m is None else counts_m    # counts of consecutive pairs modulo 1_000_000
+    counts_m = {} if counts_m is None else counts_m    # counts of consecutive pairs modulo LETTER_OFFSETS
     for pair in zip(ids, ids[1:]): # iterate consecutive elements
         counts[pair] = counts.get(pair, 0) + 1
         item_0 = pair[0] % LETTER_OFFSETS
@@ -324,31 +323,34 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         of pair with the new integer token idx
         Example: ids=[1, 2, 3, 1, 2], pair=(1, 2), idx=4 -> [4, 3, 4]
         """
+        base_pair = (pair[0] % LETTER_OFFSETS, pair[1] % LETTER_OFFSETS)
         newids = []
         i = 0
         while i < len(ids) - 1:
             # pair has the value without the millions added on
             # if not at the very last position AND the pair matches, replace it.
-            if ids[i] == (pair[0] + LOWERCASE_OFFSET) and ids[i+1] == (pair[1] + LOWERCASE_OFFSET):
+            if ids[i] == (base_pair[0] + LOWERCASE_OFFSET) and ids[i+1] == (base_pair[1] + LOWERCASE_OFFSET):
                 newids.append(idx + LOWERCASE_OFFSET)
                 i += 2
-            elif ids[i] == (pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (pair[1] + LOWERCASE_OFFSET):
+            elif ids[i] == (base_pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (base_pair[1] + LOWERCASE_OFFSET):
                 newids.append(idx + CAPITALIZED_OFFSET)
                 i += 2
-            elif ids[i] == (pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (pair[1] + CAPITALIZED_OFFSET) and self.vocab_cnt_ids[pair[0]] == 1 and self.vocab_cnt_ids[pair[1]] == 1:
+            elif ids[i] == (base_pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (base_pair[1] + CAPITALIZED_OFFSET) and self.vocab_cnt_ids[base_pair[0]] == 1 and self.vocab_cnt_ids[base_pair[1]] == 1:
                 newids.append(idx + ALLCAPS_OFFSET)
                 i += 2
-            elif ids[i] == (pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (pair[1] + ALLCAPS_OFFSET) and self.vocab_cnt_ids[pair[0]] == 1:
+            elif ids[i] == (base_pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (base_pair[1] + ALLCAPS_OFFSET) and self.vocab_cnt_ids[base_pair[0]] == 1:
                 newids.append(idx + ALLCAPS_OFFSET)
                 i += 2
-            elif ids[i] == (pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (pair[1] + CAPITALIZED_OFFSET) and self.vocab_cnt_ids[pair[1]] == 1:
+            elif ids[i] == (base_pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (base_pair[1] + CAPITALIZED_OFFSET) and self.vocab_cnt_ids[base_pair[1]] == 1:
                 newids.append(idx + ALLCAPS_OFFSET)
                 i += 2
-            elif ids[i] == (pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (pair[1] + ALLCAPS_OFFSET):
+            elif ids[i] == (base_pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (base_pair[1] + ALLCAPS_OFFSET):
                 newids.append(idx + ALLCAPS_OFFSET)
                 i += 2
-            #!!! Mish-mash case NEEDS TO BE HANDLED HERE - find which is the most common mish-mash and store it in the table for decoding
-            # List out the 25 mish-mash cases, and pick the most common one, and store it in the table for decoding.  Comment out the cases already handled.
+            elif ids[i] == pair[0] and ids[i+1] == pair[1]:
+                # find which is the most common mish-mash and store it in the table for decoding
+                newids.append(idx + MISHMASH_OFFSET)
+                i += 2
             else:
                 newids.append(ids[i])
                 i += 1
@@ -389,11 +391,12 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         self.vocab_cnt_ids = vocab_cnt_ids # used in decode() - recursive decoding to the individual tokens
         # capitalized letters are mapped to lower case + CAPITALIZED_OFFSET, need to map them back in decode.
         #!!!! Do we really even need this - don't we check in decode if the token is capitalized, and then map it back to upper case?
+        '''
         for idx in range(1_000_097, 1_000_123):
             vocab[idx] = bytes([idx - 1_000_000 - (97-65)]) # map back to upper-case
             raw_vocab[idx] = [idx - 1_000_000 - (97-65)]    # map back to upper-case
             vocab_cnt_ids[idx] = 1
-
+        '''
         for i in range(num_merges):
             # count the number of times every consecutive pair appears
             stats = {}
@@ -410,8 +413,8 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             # save the merge
             merges[pair] = idx
             raw_vocab[idx] = [pair[0], pair[1]]
-            vocab[idx] = vocab[pair[0]] + vocab[pair[1]]
-            vocab_cnt_ids[idx] = vocab_cnt_ids[pair[0]] + vocab_cnt_ids[pair[1]]
+            vocab[idx] = vocab[pair[0] % LETTER_OFFSETS] + vocab[pair[1] % LETTER_OFFSETS]
+            vocab_cnt_ids[idx] = vocab_cnt_ids[pair[0] % LETTER_OFFSETS] + vocab_cnt_ids[pair[1] % LETTER_OFFSETS]
             # prints
             if verbose:
                 print(f"merge {i+1}/{num_merges}: {pair} -> {idx} ({vocab[idx]}) had {stats[pair]} occurrences")
@@ -440,25 +443,27 @@ class CapitalSpaceOutTokenizer(Tokenizer):
                 # it's a merged token - recurse on it - pass down the case markings
                 if idx_cap == LOWERCASE_OFFSET:
                     # LOWERCASE_OFFSET -> LOWERCASE_OFFSET, LOWERCASE_OFFSET
+                    recurse_ids = [self.raw_vocab[idx_base][0] % LETTER_OFFSETS, self.raw_vocab[idx_base][1] % LETTER_OFFSETS]
+                    # part_bytes += self.decode_recursive(recurse_ids)
                     part_bytes += self.decode_recursive(self.raw_vocab[idx_base])
                 elif idx_cap == CAPITALIZED_OFFSET:
                     # CAPITALIZED_OFFSET -> CAPITALIZED_OFFSET, LOWERCASE_OFFSET
-                    recurse_ids = self.raw_vocab[idx_base].copy()
+                    recurse_ids = [self.raw_vocab[idx_base][0] % LETTER_OFFSETS, self.raw_vocab[idx_base][1] % LETTER_OFFSETS]
                     recurse_ids[0] += CAPITALIZED_OFFSET
                     recurse_ids[1] += LOWERCASE_OFFSET
                     part_bytes += self.decode_recursive(recurse_ids)
                 elif idx_cap == ALLCAPS_OFFSET:
                     # ALLCAPS_OFFSET -> ALLCAPS_OFFSET, ALLCAPS_OFFSET
-                    recurse_ids = self.raw_vocab[idx_base].copy()
+                    recurse_ids = [self.raw_vocab[idx_base][0] % LETTER_OFFSETS, self.raw_vocab[idx_base][1] % LETTER_OFFSETS]
                     recurse_ids[0] += ALLCAPS_OFFSET
                     recurse_ids[1] += ALLCAPS_OFFSET
                     part_bytes += self.decode_recursive(recurse_ids)
                 else:
                     # MISHMASH_OFFSET -> Table lookup, Table lookup - whatever was merged together in the table is preserved.
-                    # !!! handle MISHMASH_OFFSET later !!!
-                    print(f"Skipping mish-mash token: {idx_base} {idx_cap} {self.vocab_cnt_ids[idx_base]}")
-                    part_bytes += self.decode_recursive(self.raw_vocab[idx_base])
                     assert idx_cap == MISHMASH_OFFSET
+                    # print(f"mish-mash token: {idx_base} {idx_cap} {self.vocab_cnt_ids[idx_base]}")
+                    # recurse_ids = [self.raw_vocab[idx_base][0] % LETTER_OFFSETS, self.raw_vocab[idx_base][1] % LETTER_OFFSETS]
+                    part_bytes += self.decode_recursive(self.raw_vocab[idx_base])
             else:
                 raise ValueError(f"decode_recursive invalid token id: {idx} {idx_base} {idx_cap} {self.vocab_cnt_ids[idx_base]}")
         return part_bytes
