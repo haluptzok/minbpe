@@ -382,12 +382,12 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         # iteratively merge the most common pairs to create new tokens
         merges = {} # (int, int) -> int
         vocab = {idx: bytes([idx]) for idx in range(256)} # idx -> bytes
-        raw_vocab = {idx: [idx] for idx in range(256)} # idx -> list of ids
+        recursive_vocab = {idx: [idx] for idx in range(256)} # idx -> list of ids
         vocab_cnt_ids = {idx: 1 for idx in range(256)} # idx -> count of ids
         # save class variables
         self.merges = merges # used in encode()
         self.vocab = vocab   # used in decode() - 1 shot decoding to the whole string
-        self.raw_vocab = raw_vocab # used in decode() - recursive decoding to the individual tokens
+        self.recursive_vocab = recursive_vocab # used in decode() - recursive decoding to the individual tokens
         self.vocab_cnt_ids = vocab_cnt_ids # used in decode() - recursive decoding to the individual tokens
         for i in range(num_merges):
             # count the number of times every consecutive pair appears
@@ -404,7 +404,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             ids = [self.merge(chunk_ids, pair, idx) for chunk_ids in ids]
             # save the merge
             merges[pair] = idx
-            raw_vocab[idx] = [pair[0], pair[1]]
+            recursive_vocab[idx] = [pair[0], pair[1]]
             vocab[idx] = vocab[pair[0] % LETTER_OFFSETS] + vocab[pair[1] % LETTER_OFFSETS]
             vocab_cnt_ids[idx] = vocab_cnt_ids[pair[0] % LETTER_OFFSETS] + vocab_cnt_ids[pair[1] % LETTER_OFFSETS]
             # prints
@@ -436,27 +436,26 @@ class CapitalSpaceOutTokenizer(Tokenizer):
                 # So zero out the caps markings when copying out of the table when not mish-mash.
                 if idx_cap == LOWERCASE_OFFSET:
                     # LOWERCASE_OFFSET -> LOWERCASE_OFFSET, LOWERCASE_OFFSET
-                    recurse_ids = [self.raw_vocab[idx_base][0] % LETTER_OFFSETS, self.raw_vocab[idx_base][1] % LETTER_OFFSETS]
+                    recurse_ids = [self.recursive_vocab[idx_base][0] % LETTER_OFFSETS, self.recursive_vocab[idx_base][1] % LETTER_OFFSETS]
                     recurse_ids[0] += LOWERCASE_OFFSET
                     recurse_ids[1] += LOWERCASE_OFFSET
                     part_bytes += self.decode_recursive(recurse_ids)
-                    # part_bytes += self.decode_recursive(self.raw_vocab[idx_base])
                 elif idx_cap == CAPITALIZED_OFFSET:
                     # CAPITALIZED_OFFSET -> CAPITALIZED_OFFSET, LOWERCASE_OFFSET
-                    recurse_ids = [self.raw_vocab[idx_base][0] % LETTER_OFFSETS, self.raw_vocab[idx_base][1] % LETTER_OFFSETS]
+                    recurse_ids = [self.recursive_vocab[idx_base][0] % LETTER_OFFSETS, self.recursive_vocab[idx_base][1] % LETTER_OFFSETS]
                     recurse_ids[0] += CAPITALIZED_OFFSET
                     recurse_ids[1] += LOWERCASE_OFFSET
                     part_bytes += self.decode_recursive(recurse_ids)
                 elif idx_cap == ALLCAPS_OFFSET:
                     # ALLCAPS_OFFSET -> ALLCAPS_OFFSET, ALLCAPS_OFFSET
-                    recurse_ids = [self.raw_vocab[idx_base][0] % LETTER_OFFSETS, self.raw_vocab[idx_base][1] % LETTER_OFFSETS]
+                    recurse_ids = [self.recursive_vocab[idx_base][0] % LETTER_OFFSETS, self.recursive_vocab[idx_base][1] % LETTER_OFFSETS]
                     recurse_ids[0] += ALLCAPS_OFFSET
                     recurse_ids[1] += ALLCAPS_OFFSET
                     part_bytes += self.decode_recursive(recurse_ids)
                 else:
                     # MISHMASH_OFFSET -> Table lookup, Table lookup - whatever was merged together in the table is preserved.
                     assert idx_cap == MISHMASH_OFFSET
-                    part_bytes += self.decode_recursive(self.raw_vocab[idx_base])
+                    part_bytes += self.decode_recursive(self.recursive_vocab[idx_base])
             else:
                 raise ValueError(f"decode_recursive invalid token id: {idx} {idx_base} {idx_cap} {self.vocab_cnt_ids[idx_base]}")
         return part_bytes
