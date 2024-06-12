@@ -327,8 +327,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         newids = []
         i = 0
         while i < len(ids) - 1:
-            # pair has the value without the millions added on
-            # if not at the very last position AND the pair matches, replace it.
+            # if the base_pair matches for valid LETTER_OFFSETS combos, replace it.
             if ids[i] == (base_pair[0] + LOWERCASE_OFFSET) and ids[i+1] == (base_pair[1] + LOWERCASE_OFFSET):
                 newids.append(idx + LOWERCASE_OFFSET)
                 i += 2
@@ -368,7 +367,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         text_chunks = re.findall(self.compiled_pattern, text)
 
         # input text preprocessing
-        # map every upper case character to lower-case + 1 million
+        # map every upper case character to lower-case + CAPITALIZED_OFFSET
         ids = []
         for chunk in text_chunks:
             ids_piece = []
@@ -396,20 +395,55 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             for chunk_ids in ids:
                 # passing in stats will update it in place, adding up counts
                 get_stats(chunk_ids, stats, stats_m)
-            # find the pair with the highest count
-            pair = max(stats, key=stats.get)
+            # find the pair of codepoints with the highest count, ignoring LETTER_OFFSETS
+            pair = max(stats_m, key=stats_m.get)
+            # find the pair_raw of codepoints with the highest count for the pair, respecting LETTER_OFFSETS
+            # find the most common non-standard/invalid merge rules for the mish-mash case
+            # invalid_combos lists all the invalid combinations, some of which are valid if their count of tokens is 1.
+            invalid_combos = [# (LOWERCASE_OFFSET, LOWERCASE_OFFSET, 0, 0), # valid
+                              (LOWERCASE_OFFSET, CAPITALIZED_OFFSET, 0, 0),
+                              (LOWERCASE_OFFSET, ALLCAPS_OFFSET, 0, 0),
+                              (LOWERCASE_OFFSET, MISHMASH_OFFSET, 0, 0),
+                              # (CAPITALIZED_OFFSET, LOWERCASE_OFFSET, 0, 0), # valid
+                              (CAPITALIZED_OFFSET, CAPITALIZED_OFFSET, 1, 1), # if first token or second is more than 1 letter, this is invalid
+                              (CAPITALIZED_OFFSET, ALLCAPS_OFFSET, 1, 0),     # if first token is more than 1 letter, this is invalid
+                              (CAPITALIZED_OFFSET, MISHMASH_OFFSET, 0, 0),
+                              (ALLCAPS_OFFSET, LOWERCASE_OFFSET, 1, 0),       # if first token is more than 1 letter, this is invalid
+                              (ALLCAPS_OFFSET, CAPITALIZED_OFFSET, 0, 1),     # if second token is more than 1 letter, this is invalid
+                              # (ALLCAPS_OFFSET, ALLCAPS_OFFSET, 0, 0),       # valid
+                              (ALLCAPS_OFFSET, MISHMASH_OFFSET, 0, 0),
+                              (MISHMASH_OFFSET, LOWERCASE_OFFSET, 0, 0),
+                              (MISHMASH_OFFSET, CAPITALIZED_OFFSET, 0, 0),
+                              (MISHMASH_OFFSET, ALLCAPS_OFFSET, 0, 0),
+                              (MISHMASH_OFFSET, MISHMASH_OFFSET, 0, 0)]
+
+            best_invalid_combo = (LOWERCASE_OFFSET, CAPITALIZED_OFFSET) # Make iPhone work by default if nothing else is found
+            best_invalid_count = 0
+            # which of the invalid combos has the highest count?  Use it for the mish-mash case
+            for invalid_combo in invalid_combos:
+                if invalid_combo[2] >= self.vocab_cnt_ids[pair[0] % LETTER_OFFSETS]:
+                    continue # valid combo, skip it
+                if invalid_combo[3] >= self.vocab_cnt_ids[pair[1] % LETTER_OFFSETS]:
+                    continue # valid combo, skip it
+                invalid_count = stats.get((pair[0] + invalid_combo[0], pair[1] + invalid_combo[1]), 0)
+                if invalid_count > best_invalid_count:
+                    best_invalid_combo = invalid_combo
+                    best_invalid_count = invalid_count
+
+            pair_raw = (pair[0] + best_invalid_combo[0], pair[1] + best_invalid_combo[1])
             # mint a new token: assign it the next available id
             idx = 256 + i
-            # replace all occurrences of pair in ids with idx
-            ids = [self.merge(chunk_ids, pair, idx) for chunk_ids in ids]
+            print(f"{idx=} {pair=} {pair_raw=}")
             # save the merge
             merges[pair] = idx
-            recursive_vocab[idx] = [pair[0], pair[1]]
+            recursive_vocab[idx] = pair_raw # MISHMASH_OFFSET is supported by recording the pair that was merged here
             vocab[idx] = vocab[pair[0] % LETTER_OFFSETS] + vocab[pair[1] % LETTER_OFFSETS]
             vocab_cnt_ids[idx] = vocab_cnt_ids[pair[0] % LETTER_OFFSETS] + vocab_cnt_ids[pair[1] % LETTER_OFFSETS]
+            # replace all occurrences of pair in ids with idx
+            ids = [self.merge(chunk_ids, pair_raw, idx) for chunk_ids in ids]
             # prints
             if verbose:
-                print(f"merge {i+1}/{num_merges}: {pair} -> {idx} ({vocab[idx]}) had {stats[pair]} occurrences")
+                print(f"merge {i+1}/{num_merges}: {pair} -> {idx} ({vocab[idx]}) had {stats_m[pair]} occurrences")
 
 
     def register_special_tokens(self, special_tokens):
@@ -477,25 +511,34 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         return text
 
     def _encode_chunk(self, ids):
-        # return the token ids
-        # let's begin. first, convert all bytes to integers in range 0..255
-        # ids = list(text_bytes)
+        # convert the list of text bytes to the token ids
         while len(ids) >= 2:
             # find the pair with the lowest merge index
             stats = {}
             stats_m = {}
             get_stats(ids, stats, stats_m)
-            pair = min(stats, key=lambda p: self.merges.get(p, float("inf")))
-            # pair = min(stats_m, key=lambda p: self.merges.get(p, float("inf")))
-            # subtle: if there are no more merges available, the key will
-            # result in an inf for every single pair, and the min will be
-            # just the first pair in the list, arbitrarily
-            # we can detect this terminating case by a membership check
-            if pair not in self.merges:
-                break # nothing else can be merged anymore
-            # otherwise let's merge the best pair (lowest merge index)
-            idx = self.merges[pair]
-            ids = self.merge(ids, pair, idx)
+            c_ids = len(ids)
+            # A pair might not result in a merge if it's not a compatible LETTER_OFFSETS pair
+            # so skip it and keep looking for a pair that will merge, until nothing left to merge
+            while c_ids == len(ids): # keep trying until a merge is done
+                if len(stats_m) == 0:  # Are there any pairs left to merge?
+                    break
+                base_pair = min(stats_m, key=lambda p: self.merges.get(p, float("inf")))
+                # print(f"{pair=} {stats_m[pair]=} {self.merges.get(pair, float('inf'))=}")
+                # subtle: if there are no more merges available, the key will
+                # result in an inf for every single pair, and the min will be
+                # just the first pair in the list, arbitrarily
+                # we can detect this terminating case by a membership check
+                if base_pair not in self.merges:
+                    break # nothing else can be merged anymore
+                # otherwise let's merge the base_pair (lowest merge index)
+                idx = self.merges[base_pair]
+                pair = self.recursive_vocab[idx] # get the mish-mash pair
+                ids = self.merge(ids, pair, idx)
+                del stats_m[base_pair] # don't consider this pair again
+
+            if c_ids == len(ids):  # if no merges were done, we're finished
+                break
         return ids
 
     def encode_ordinary(self, text):

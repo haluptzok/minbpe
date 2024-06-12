@@ -11,6 +11,10 @@ egg_test_string = '''
 egg egg egg
 Egg Egg Egg
 EGG EGG EGG
+eGG eGG eGG
+egG egG egG
+EGe EGe EGe
+EgG EgG EgG
 '''
 text = egg_test_string
 tokenizer = GPT4Tokenizer()
@@ -44,7 +48,7 @@ for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTok
     tokenizer.train(text, 300) # tokenizer.train(text, 512)
     # writes two files in the models directory: name.model, and name.vocab
     prefix = os.path.join("models", name)
-    tokenizer.save(prefix)
+    # !!! tokenizer.save(prefix)
     t1 = time.time()
     print(f"Training {name} took {t1 - t0:.2f} seconds")
     t0 = time.time()
@@ -55,6 +59,8 @@ for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTok
     print(egg_test_string)
     tokenizer_ids = tokenizer.encode(egg_test_string)
     print(tokenizer_ids)
+    for token in tokenizer_ids:
+        print(f'{token:10d}', tokenizer.vocab[token % 1_000_000], tokenizer.recursive_vocab[token % 1_000_000], tokenizer.decode([token]))
     tokenizer_str = tokenizer.decode(tokenizer_ids)
     print(tokenizer_str)
     assert tokenizer_str == egg_test_string
@@ -67,4 +73,6 @@ for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTok
         assert tokenizer_str == training_text
     t1 = time.time()
     print(f"Testing {name} took {t1 - t0:.2f} seconds")
-    print(tokenizer.vocab)
+    # print(tokenizer.vocab)
+    for i in range(256, 300):
+        print(i, tokenizer.vocab[i], tokenizer.recursive_vocab[i], tokenizer.decode([i]), tokenizer.decode([i + 1_000_000]), tokenizer.decode([i + 2_000_000]), tokenizer.decode([i + 3_000_000]))
