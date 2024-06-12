@@ -63,6 +63,7 @@ LOWERCASE_OFFSET   = 0          # 1 or more lower case letters
 CAPITALIZED_OFFSET = 1_000_000  # 1 capital letter followed by 0 or more lower case letters
 ALLCAPS_OFFSET     = 2_000_000  # 2 or more capital letters
 MISHMASH_OFFSET    = 3_000_000  # 2 or more mix of capital and lower case letters in non-standard way
+SPACEOUT_OFFSET    = 10_000_000 # 1 space to the left of the token
 """
 The transformer using this tokenizer needs to input and output the extra stream of capitalization tokens.
 On the input side there is an embedding for the 3 states which is added in just like the positional encoding.
@@ -154,25 +155,29 @@ some concessions are made for simplicity.
 import unicodedata
 
 # -----------------------------------------------------------------------------
-# a few helper functions useful for both BasicTokenizer and RegexTokenizer
+# a few helper functions
 
-def get_stats(ids, counts=None, counts_m=None):
+def get_stats(ids, stats_raw=None, stats_merged=None):
     """
     Given a list of integers, return a dictionary of counts of consecutive pairs
     Example: [1, 2, 3, 1, 2] -> {(1, 2): 2, (2, 3): 1, (3, 1): 1}
     Optionally allows to update an existing dictionary of counts
     """
-    counts = {} if counts is None else counts          # counts of consecutive pairs
-    counts_m = {} if counts_m is None else counts_m    # counts of consecutive pairs modulo LETTER_OFFSETS
+    # stats_raw is counts of consecutive pairs ignoring SPACEOUT_OFFSET
+    # stats_merged is counts of consecutive pairs modulo SPACEOUT_OFFSET and LETTER_OFFSETS
     for pair in zip(ids, ids[1:]): # iterate consecutive elements
-        counts[pair] = counts.get(pair, 0) + 1
+        # ignore the SPACE_OFFSET for character matching on counts
+        item_0 = pair[0] % SPACEOUT_OFFSET
+        item_1 = pair[1] % SPACEOUT_OFFSET
+        pair_m = (item_0, item_1)
+        stats_raw[pair_m] = stats_raw.get(pair_m, 0) + 1
+        # ignore the LETTER_OFFSETS for character matching on stats_m
         item_0 = pair[0] % LETTER_OFFSETS
         item_1 = pair[1] % LETTER_OFFSETS
         pair_m = (item_0, item_1)
-        counts_m[pair_m] = counts_m.get(pair_m, 0) + 1
+        stats_merged[pair_m] = stats_merged.get(pair_m, 0) + 1
 
-    return counts # , counts_m
-
+    return
 
 # first two helper functions...
 def replace_control_characters(s: str) -> str:
@@ -328,27 +333,30 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         i = 0
         while i < len(ids) - 1:
             # if the base_pair matches for valid LETTER_OFFSETS combos, replace it.
-            if ids[i] == (base_pair[0] + LOWERCASE_OFFSET) and ids[i+1] == (base_pair[1] + LOWERCASE_OFFSET):
-                newids.append(idx + LOWERCASE_OFFSET)
+            ids_i0 = ids[i] % SPACEOUT_OFFSET # ignore the SPACEOUT_OFFSET for character matching
+            space_offset0 = 0 # !!! ids[i] - ids_i0 # But if there is a SPACEOUT_OFFSET on the left, we need to preserve it.
+            # ids_i1 = ids[i+1] % SPACEOUT_OFFSET - can't be SPACEOUT_OFFSET on the right, so we don't need to check it.
+            if ids_i0 == (base_pair[0] + LOWERCASE_OFFSET) and ids[i+1] == (base_pair[1] + LOWERCASE_OFFSET):
+                newids.append(idx + LOWERCASE_OFFSET + space_offset0)
                 i += 2
-            elif ids[i] == (base_pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (base_pair[1] + LOWERCASE_OFFSET):
-                newids.append(idx + CAPITALIZED_OFFSET)
+            elif ids_i0 == (base_pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (base_pair[1] + LOWERCASE_OFFSET):
+                newids.append(idx + CAPITALIZED_OFFSET + space_offset0)
                 i += 2
-            elif ids[i] == (base_pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (base_pair[1] + CAPITALIZED_OFFSET) and self.vocab_cnt_ids[base_pair[0]] == 1 and self.vocab_cnt_ids[base_pair[1]] == 1:
-                newids.append(idx + ALLCAPS_OFFSET)
+            elif ids_i0 == (base_pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (base_pair[1] + CAPITALIZED_OFFSET) and self.vocab_cnt_ids[base_pair[0]] == 1 and self.vocab_cnt_ids[base_pair[1]] == 1:
+                newids.append(idx + ALLCAPS_OFFSET + space_offset0)
                 i += 2
-            elif ids[i] == (base_pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (base_pair[1] + ALLCAPS_OFFSET) and self.vocab_cnt_ids[base_pair[0]] == 1:
-                newids.append(idx + ALLCAPS_OFFSET)
+            elif ids_i0 == (base_pair[0] + CAPITALIZED_OFFSET) and ids[i+1] == (base_pair[1] + ALLCAPS_OFFSET) and self.vocab_cnt_ids[base_pair[0]] == 1:
+                newids.append(idx + ALLCAPS_OFFSET + space_offset0)
                 i += 2
-            elif ids[i] == (base_pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (base_pair[1] + CAPITALIZED_OFFSET) and self.vocab_cnt_ids[base_pair[1]] == 1:
-                newids.append(idx + ALLCAPS_OFFSET)
+            elif ids_i0 == (base_pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (base_pair[1] + CAPITALIZED_OFFSET) and self.vocab_cnt_ids[base_pair[1]] == 1:
+                newids.append(idx + ALLCAPS_OFFSET + space_offset0)
                 i += 2
-            elif ids[i] == (base_pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (base_pair[1] + ALLCAPS_OFFSET):
-                newids.append(idx + ALLCAPS_OFFSET)
+            elif ids_i0 == (base_pair[0] + ALLCAPS_OFFSET) and ids[i+1] == (base_pair[1] + ALLCAPS_OFFSET):
+                newids.append(idx + ALLCAPS_OFFSET + space_offset0)
                 i += 2
-            elif ids[i] == pair[0] and ids[i+1] == pair[1]:
+            elif ids_i0 == pair[0] and ids[i+1] == pair[1]:
                 # find which is the most common mish-mash and store it in the table for decoding
-                newids.append(idx + MISHMASH_OFFSET)
+                newids.append(idx + MISHMASH_OFFSET + space_offset0)
                 i += 2
             else:
                 newids.append(ids[i])
@@ -370,12 +378,37 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         # map every upper case character to lower-case + CAPITALIZED_OFFSET
         ids = []
         for chunk in text_chunks:
+            # print(f"{chunk=}")
             ids_piece = []
-            for c in chunk:
+            i = 0
+            # 1st space is a special case, remove the pace if the rest of chunk is not all spaces.
+            space_out = False
+
+            if False and len(chunk) > 1 and ord(chunk[0]) == 32: #!!!
+                for c in chunk[1:]:
+                    if ord(c) != 32:
+                        space_out = True
+                        break
+
+            if False and space_out == True: # !!!!
+                # skip the first space in the output
+                i += 1
+
+            while i < len(chunk):
+                c = chunk[i]
                 if 65 <= ord(c) <= 90:
-                    ids_piece.append(ord(c) + CAPITALIZED_OFFSET + (97-65))
+                    # map every upper case character to lower-case + CAPITALIZED_OFFSET
+                    new_c = [ord(c) + CAPITALIZED_OFFSET + (97-65)]
+                    # ids_piece.append(ord(c) + CAPITALIZED_OFFSET + (97-65))
                 else:
-                    ids_piece += list(c.encode("utf-8"))
+                    new_c = list(c.encode("utf-8"))
+
+                if space_out == True and i == 1:
+                    # add a space_out to the first character
+                    new_c[0] += SPACEOUT_OFFSET
+                ids_piece += new_c
+                i += 1
+
             ids.append(ids_piece)
 
         # iteratively merge the most common pairs to create new tokens
@@ -390,13 +423,13 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         self.vocab_cnt_ids = vocab_cnt_ids # used in decode() - recursive decoding to the individual tokens
         for i in range(num_merges):
             # count the number of times every consecutive pair appears
-            stats = {}
-            stats_m = {}
+            stats_raw = {}
+            stats_merged = {}
             for chunk_ids in ids:
                 # passing in stats will update it in place, adding up counts
-                get_stats(chunk_ids, stats, stats_m)
+                get_stats(chunk_ids, stats_raw, stats_merged)
             # find the pair of codepoints with the highest count, ignoring LETTER_OFFSETS
-            pair = max(stats_m, key=stats_m.get)
+            pair = max(stats_merged, key=stats_merged.get)
             # find the pair_raw of codepoints with the highest count for the pair, respecting LETTER_OFFSETS
             # find the most common non-standard/invalid merge rules for the mish-mash case
             # invalid_combos lists all the invalid combinations, some of which are valid if their count of tokens is 1.
@@ -425,7 +458,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
                     continue # valid combo, skip it
                 if invalid_combo[3] >= self.vocab_cnt_ids[pair[1] % LETTER_OFFSETS]:
                     continue # valid combo, skip it
-                invalid_count = stats.get((pair[0] + invalid_combo[0], pair[1] + invalid_combo[1]), 0)
+                invalid_count = stats_raw.get((pair[0] + invalid_combo[0], pair[1] + invalid_combo[1]), 0)
                 if invalid_count > best_invalid_count:
                     best_invalid_combo = invalid_combo
                     best_invalid_count = invalid_count
@@ -443,7 +476,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             ids = [self.merge(chunk_ids, pair_raw, idx) for chunk_ids in ids]
             # prints
             if verbose:
-                print(f"merge {i+1}/{num_merges}: {pair} -> {idx} ({vocab[idx]}) had {stats_m[pair]} occurrences")
+                print(f"merge {i+1}/{num_merges}: {pair} -> {idx} ({vocab[idx]}) had {stats_merged[pair]} occurrences")
 
 
     def register_special_tokens(self, special_tokens):
@@ -514,17 +547,17 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         # convert the list of text bytes to the token ids
         while len(ids) >= 2:
             # find the pair with the lowest merge index
-            stats = {}
-            stats_m = {}
-            get_stats(ids, stats, stats_m)
+            stats_raw = {}
+            stats_merged = {}
+            get_stats(ids, stats_raw, stats_merged)
             c_ids = len(ids)
             # A pair might not result in a merge if it's not a compatible LETTER_OFFSETS pair
             # so skip it and keep looking for a pair that will merge, until nothing left to merge
             while c_ids == len(ids): # keep trying until a merge is done
-                if len(stats_m) == 0:  # Are there any pairs left to merge?
+                if len(stats_merged) == 0:  # Are there any pairs left to merge?
                     break
-                base_pair = min(stats_m, key=lambda p: self.merges.get(p, float("inf")))
-                # print(f"{pair=} {stats_m[pair]=} {self.merges.get(pair, float('inf'))=}")
+                base_pair = min(stats_merged, key=lambda p: self.merges.get(p, float("inf")))
+                # print(f"{pair=} {stats_merged[pair]=} {self.merges.get(pair, float('inf'))=}")
                 # subtle: if there are no more merges available, the key will
                 # result in an inf for every single pair, and the min will be
                 # just the first pair in the list, arbitrarily
@@ -535,7 +568,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
                 idx = self.merges[base_pair]
                 pair = self.recursive_vocab[idx] # get the mish-mash pair
                 ids = self.merge(ids, pair, idx)
-                del stats_m[base_pair] # don't consider this pair again
+                del stats_merged[base_pair] # don't consider this pair again
 
             if c_ids == len(ids):  # if no merges were done, we're finished
                 break
