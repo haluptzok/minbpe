@@ -63,7 +63,7 @@ LOWERCASE_OFFSET   = 0          # 1 or more lower case letters
 CAPITALIZED_OFFSET = 1_000_000  # 1 capital letter followed by 0 or more lower case letters
 ALLCAPS_OFFSET     = 2_000_000  # 2 or more capital letters
 MISHMASH_OFFSET    = 3_000_000  # 2 or more mix of capital and lower case letters in non-standard way
-SPACEOUT_OFFSET    = 10_000_000 # 1 space to the left of the token
+SPACEOUT_OFFSET    = 40_000_000 # 1 space to the left of the token
 """
 The transformer using this tokenizer needs to input and output the extra stream of capitalization tokens.
 On the input side there is an embedding for the 3 states which is added in just like the positional encoding.
@@ -334,8 +334,8 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         while i < len(ids) - 1:
             # if the base_pair matches for valid LETTER_OFFSETS combos, replace it.
             ids_i0 = ids[i] % SPACEOUT_OFFSET # ignore the SPACEOUT_OFFSET for character matching
-            space_offset0 = 0 # !!! ids[i] - ids_i0 # But if there is a SPACEOUT_OFFSET on the left, we need to preserve it.
-            # ids_i1 = ids[i+1] % SPACEOUT_OFFSET - can't be SPACEOUT_OFFSET on the right, so we don't need to check it.
+            space_offset0 = ids[i] - ids_i0 # But if there is a SPACEOUT_OFFSET on the left, we need to preserve it.
+            # ids_i1 = ids[i+1] % SPACEOUT_OFFSET - can't be SPACEOUT_OFFSET on the right, so we don't need to check/preserve it.
             if ids_i0 == (base_pair[0] + LOWERCASE_OFFSET) and ids[i+1] == (base_pair[1] + LOWERCASE_OFFSET):
                 newids.append(idx + LOWERCASE_OFFSET + space_offset0)
                 i += 2
@@ -381,33 +381,25 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             # print(f"{chunk=}")
             ids_piece = []
             i = 0
-            # 1st space is a special case, remove the pace if the rest of chunk is not all spaces.
+            # 1st space is a special case, remove it if the next character is not a space
             space_out = False
-
-            if False and len(chunk) > 1 and ord(chunk[0]) == 32: #!!!
-                for c in chunk[1:]:
-                    if ord(c) != 32:
-                        space_out = True
-                        break
-
-            if False and space_out == True: # !!!!
+            if len(chunk) > 1 and ord(chunk[0]) == 32 and ord(chunk[1]) != 32:
+                space_out = True
                 # skip the first space in the output
-                i += 1
+                i = 1
 
             while i < len(chunk):
                 c = chunk[i]
                 if 65 <= ord(c) <= 90:
                     # map every upper case character to lower-case + CAPITALIZED_OFFSET
                     new_c = [ord(c) + CAPITALIZED_OFFSET + (97-65)]
-                    # ids_piece.append(ord(c) + CAPITALIZED_OFFSET + (97-65))
                 else:
                     new_c = list(c.encode("utf-8"))
-
-                if space_out == True and i == 1:
-                    # add a space_out to the first character
-                    new_c[0] += SPACEOUT_OFFSET
                 ids_piece += new_c
                 i += 1
+            if space_out == True:
+                # add a space_out to the first character
+                ids_piece[0] += SPACEOUT_OFFSET
 
             ids.append(ids_piece)
 
@@ -478,7 +470,6 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             if verbose:
                 print(f"merge {i+1}/{num_merges}: {pair} -> {idx} ({vocab[idx]}) had {stats_merged[pair]} occurrences")
 
-
     def register_special_tokens(self, special_tokens):
         # special_tokens is a dictionary of str -> int
         # example: {"<|endoftext|>": 100257}
@@ -489,9 +480,13 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         # given ids (list of integers), return Python string
         part_bytes = []
         for idx in ids:
-            idx_base = idx % LETTER_OFFSETS
-            idx_cap = idx - idx_base
+            idx_char = idx % SPACEOUT_OFFSET
+            idx_space = idx - idx_char # equals SPACEOUT_OFFSET or 0
+            idx_base = idx_char % LETTER_OFFSETS
+            idx_cap = idx_char - idx_base
             if self.vocab_cnt_ids[idx_base] == 1:
+                    if idx_space == SPACEOUT_OFFSET:
+                        part_bytes.append(b" ")
                     if idx_base >= 97 and idx_base <= 122 and idx_cap != LOWERCASE_OFFSET:
                         # make CAPITALIZED and ALLCAPS into an upper case letter
                         part_bytes.append(self.vocab[idx_base - (97 - 65)])
@@ -505,24 +500,33 @@ class CapitalSpaceOutTokenizer(Tokenizer):
                     # LOWERCASE_OFFSET -> LOWERCASE_OFFSET, LOWERCASE_OFFSET
                     recurse_ids = [self.recursive_vocab[idx_base][0] % LETTER_OFFSETS, self.recursive_vocab[idx_base][1] % LETTER_OFFSETS]
                     recurse_ids[0] += LOWERCASE_OFFSET
+                    if idx_space == SPACEOUT_OFFSET:
+                        recurse_ids[0] += SPACEOUT_OFFSET
                     recurse_ids[1] += LOWERCASE_OFFSET
                     part_bytes += self.decode_recursive(recurse_ids)
                 elif idx_cap == CAPITALIZED_OFFSET:
                     # CAPITALIZED_OFFSET -> CAPITALIZED_OFFSET, LOWERCASE_OFFSET
                     recurse_ids = [self.recursive_vocab[idx_base][0] % LETTER_OFFSETS, self.recursive_vocab[idx_base][1] % LETTER_OFFSETS]
                     recurse_ids[0] += CAPITALIZED_OFFSET
+                    if idx_space == SPACEOUT_OFFSET:
+                        recurse_ids[0] += SPACEOUT_OFFSET
                     recurse_ids[1] += LOWERCASE_OFFSET
                     part_bytes += self.decode_recursive(recurse_ids)
                 elif idx_cap == ALLCAPS_OFFSET:
                     # ALLCAPS_OFFSET -> ALLCAPS_OFFSET, ALLCAPS_OFFSET
                     recurse_ids = [self.recursive_vocab[idx_base][0] % LETTER_OFFSETS, self.recursive_vocab[idx_base][1] % LETTER_OFFSETS]
                     recurse_ids[0] += ALLCAPS_OFFSET
+                    if idx_space == SPACEOUT_OFFSET:
+                        recurse_ids[0] += SPACEOUT_OFFSET
                     recurse_ids[1] += ALLCAPS_OFFSET
                     part_bytes += self.decode_recursive(recurse_ids)
                 else:
                     # MISHMASH_OFFSET -> Table lookup, Table lookup - whatever was merged together in the table is preserved.
                     assert idx_cap == MISHMASH_OFFSET
-                    part_bytes += self.decode_recursive(self.recursive_vocab[idx_base])
+                    recurse_ids = [self.recursive_vocab[idx_base][0], self.recursive_vocab[idx_base][1]]
+                    if idx_space == SPACEOUT_OFFSET:
+                        recurse_ids[0] += SPACEOUT_OFFSET
+                    part_bytes += self.decode_recursive(recurse_ids)
             else:
                 raise ValueError(f"decode_recursive invalid token id: {idx} {idx_base} {idx_cap} {self.vocab_cnt_ids[idx_base]}")
         return part_bytes
@@ -578,19 +582,67 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         """Encoding that ignores any special tokens."""
         # split text into chunks of text by categories defined in regex pattern
         text_chunks = re.findall(self.compiled_pattern, text)
-        # all chunks of text are encoded separately, then results are joined
         ids = []
+        # all chunks of text are encoded separately, then results are joined
         for chunk in text_chunks:
             ids_chunk = []
-            for c in chunk:
+            i = 0
+            # 1st space is a special case, remove it if the next character is not a space
+            space_out = False
+            if len(chunk) > 1 and ord(chunk[0]) == 32 and ord(chunk[1]) != 32:
+                space_out = True
+                # skip the first space in the output
+                i = 1
+
+            for c in chunk[i:]:
                 # fold the upper-case into lower-case
                 if 65 <= ord(c) <= 90:
                     ids_chunk.append(ord(c) + CAPITALIZED_OFFSET + (97-65))
                 else:
                     ids_chunk.extend(list(c.encode("utf-8")))
             chunk_ids = self._encode_chunk(ids_chunk)
+            if space_out == True:
+                # add a space_out to the first character
+                chunk_ids[0] += SPACEOUT_OFFSET
             ids.extend(chunk_ids)
         return ids
+
+    def encode_ordinary_new(self, text):
+        """Encoding that ignores any special tokens."""
+        # split text into chunks of text by categories defined in regex pattern
+        text_chunks = re.findall(self.compiled_pattern, text)
+        ids = []
+        # all chunks of text are encoded separately, then results are joined
+        for chunk in text_chunks:
+            # print(f"{chunk=}")
+            ids_chunk = []
+            i = 0
+            # 1st space is a special case, remove it if the next character is not a space
+            space_out = False
+            if len(chunk) > 1 and ord(chunk[0]) == 32 and ord(chunk[1]) != 32:
+                space_out = True
+
+            if space_out == True:
+                # skip the first space in the output
+                i = 1
+
+            while i < len(chunk):
+                c = chunk[i]
+                if 65 <= ord(c) <= 90:
+                    # map every upper case character to lower-case + CAPITALIZED_OFFSET
+                    new_c = [ord(c) + CAPITALIZED_OFFSET + (97-65)]
+                else:
+                    new_c = list(c.encode("utf-8"))
+
+                if space_out == True and i == 1:
+                    # add a space_out to the first character
+                    new_c[0] += SPACEOUT_OFFSET
+                ids_chunk += new_c
+                i += 1
+            chunk_ids = self._encode_chunk(ids_chunk)
+            ids.extend(chunk_ids)
+            # ids.append(ids_chunk)
+        return
 
     def encode(self, text, allowed_special="none_raise"):
         """

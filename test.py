@@ -53,14 +53,12 @@ for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTok
     print(f"Training {name} took {t1 - t0:.2f} seconds")
     t0 = time.time()
     # test we can tokenize and detokenize the egg_test_string exactly
-    tokenizer_ids = tokenizer.encode(egg_test_string)
-    tokenizer_str = tokenizer.decode(tokenizer_ids)
     print(f"Tokenizer {name} on {filename}.txt:")
     print(egg_test_string)
     tokenizer_ids = tokenizer.encode(egg_test_string)
     print(tokenizer_ids)
     for token in tokenizer_ids:
-        print(f'{token:10d}', tokenizer.vocab[token % 1_000_000], tokenizer.recursive_vocab[token % 1_000_000], tokenizer.decode([token]))
+        print(f'{token:14d}', tokenizer.vocab[token % 1_000_000], tokenizer.recursive_vocab[token % 1_000_000], tokenizer.decode([token]))
     tokenizer_str = tokenizer.decode(tokenizer_ids)
     print(tokenizer_str)
     assert tokenizer_str == egg_test_string
