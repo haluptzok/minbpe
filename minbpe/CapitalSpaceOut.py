@@ -578,7 +578,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
                 break
         return ids
 
-    def encode_ordinary(self, text):
+    def encode_ordinary_old(self, text):
         """Encoding that ignores any special tokens."""
         # split text into chunks of text by categories defined in regex pattern
         text_chunks = re.findall(self.compiled_pattern, text)
@@ -607,7 +607,7 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             ids.extend(chunk_ids)
         return ids
 
-    def encode_ordinary_new(self, text):
+    def encode_ordinary(self, text):
         """Encoding that ignores any special tokens."""
         # split text into chunks of text by categories defined in regex pattern
         text_chunks = re.findall(self.compiled_pattern, text)
@@ -621,8 +621,6 @@ class CapitalSpaceOutTokenizer(Tokenizer):
             space_out = False
             if len(chunk) > 1 and ord(chunk[0]) == 32 and ord(chunk[1]) != 32:
                 space_out = True
-
-            if space_out == True:
                 # skip the first space in the output
                 i = 1
 
@@ -634,15 +632,15 @@ class CapitalSpaceOutTokenizer(Tokenizer):
                 else:
                     new_c = list(c.encode("utf-8"))
 
-                if space_out == True and i == 1:
-                    # add a space_out to the first character
-                    new_c[0] += SPACEOUT_OFFSET
                 ids_chunk += new_c
+                # ids_chunk.extend(new_c)
                 i += 1
             chunk_ids = self._encode_chunk(ids_chunk)
+            if space_out == True:
+                # add a space_out to the first character
+                chunk_ids[0] += SPACEOUT_OFFSET
             ids.extend(chunk_ids)
-            # ids.append(ids_chunk)
-        return
+        return ids
 
     def encode(self, text, allowed_special="none_raise"):
         """
