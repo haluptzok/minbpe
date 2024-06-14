@@ -35,7 +35,7 @@ tokenizer = GPT4Tokenizer()
 enc = tiktoken.get_encoding("cl100k_base")
 
 for text in [egg_test_string, iphone_test_string]:
-    tiktoken_ids = enc.encode(text)    
+    tiktoken_ids = enc.encode(text)
     tiktoken_str = enc.decode(tiktoken_ids)
     gpt4_tokenizer_ids = tokenizer.encode(text)
     gpt4_tokenizer_str = tokenizer.decode(gpt4_tokenizer_ids)
