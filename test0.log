@@ -1,0 +1,899 @@
+GPT4 Tokenizer on egg_test_string:
+
+egg egg egg
+Egg Egg Egg
+EGG EGG EGG
+eGG eGG eGG
+egG egG egG
+EGg EGg EGg
+EgG EgG EgG
+eGg eGg eGg
+
+[198, 29468, 19151, 19151, 198, 36, 14736, 42313, 42313, 198, 9560, 38, 469, 23050, 469, 23050, 198, 68, 23050, 384, 23050, 384, 23050, 198, 797, 38, 8866, 38, 8866, 38, 198, 9560, 70, 57211, 70, 57211, 70, 198, 36, 70, 38, 39175, 38, 39175, 38, 198, 68, 38, 70, 384, 38, 70, 384, 38, 70, 198]
+           198 
+
+         29468 egg
+         19151  egg
+         19151  egg
+           198 
+
+            36 E
+         14736 gg
+         42313  Egg
+         42313  Egg
+           198 
+
+          9560 EG
+            38 G
+           469  E
+         23050 GG
+           469  E
+         23050 GG
+           198 
+
+            68 e
+         23050 GG
+           384  e
+         23050 GG
+           384  e
+         23050 GG
+           198 
+
+           797 eg
+            38 G
+          8866  eg
+            38 G
+          8866  eg
+            38 G
+           198 
+
+          9560 EG
+            70 g
+         57211  EG
+            70 g
+         57211  EG
+            70 g
+           198 
+
+            36 E
+            70 g
+            38 G
+         39175  Eg
+            38 G
+         39175  Eg
+            38 G
+           198 
+
+            68 e
+            38 G
+            70 g
+           384  e
+            38 G
+            70 g
+           384  e
+            38 G
+            70 g
+           198 
+
+GPT4 Tokenizer on egg_test_string:
+
+iphone iphone iphone
+Iphone Iphone Iphone
+IPHONE IPHONE IPHONE
+iPhone iPhone iPhone
+IPhone IPhone IPhone
+iPHONE iPHONE iPHONE
+iPhoNe IPhoNe IPhoNe
+iphONE iphONE iphONE
+iPhoNE IPhoNE IPhoNE
+
+[198, 54459, 43548, 43548, 198, 40, 4949, 358, 4949, 358, 4949, 198, 3378, 71381, 6933, 71381, 6933, 71381, 198, 45840, 12443, 12443, 198, 3378, 26322, 358, 7084, 358, 7084, 198, 72, 76098, 602, 76098, 602, 76098, 198, 72, 3438, 78, 8989, 358, 3438, 78, 8989, 358, 3438, 78, 8989, 198, 15619, 5338, 6125, 71, 5338, 6125, 71, 5338, 198, 72, 3438, 78, 4031, 358, 3438, 78, 4031, 358, 3438, 78, 4031, 198]
+           198 
+
+         54459 iphone
+         43548  iphone
+         43548  iphone
+           198 
+
+            40 I
+          4949 phone
+           358  I
+          4949 phone
+           358  I
+          4949 phone
+           198 
+
+          3378 IP
+         71381 HONE
+          6933  IP
+         71381 HONE
+          6933  IP
+         71381 HONE
+           198 
+
+         45840 iPhone
+         12443  iPhone
+         12443  iPhone
+           198 
+
+          3378 IP
+         26322 hone
+           358  I
+          7084 Phone
+           358  I
+          7084 Phone
+           198 
+
+            72 i
+         76098 PHONE
+           602  i
+         76098 PHONE
+           602  i
+         76098 PHONE
+           198 
+
+            72 i
+          3438 Ph
+            78 o
+          8989 Ne
+           358  I
+          3438 Ph
+            78 o
+          8989 Ne
+           358  I
+          3438 Ph
+            78 o
+          8989 Ne
+           198 
+
+         15619 iph
+          5338 ONE
+          6125  ip
+            71 h
+          5338 ONE
+          6125  ip
+            71 h
+          5338 ONE
+           198 
+
+            72 i
+          3438 Ph
+            78 o
+          4031 NE
+           358  I
+          3438 Ph
+            78 o
+          4031 NE
+           358  I
+          3438 Ph
+            78 o
+          4031 NE
+           198 
+
+Tokenizer CapitalSpaceOutTokenizer training on egg.txt:
+idx=256 pair=(101, 103) pair_raw=(101, 1000103)
+merge 1/256: (101, 103) -> 256 (b'eg') had 35638 occurrences
+idx=257 pair=(256, 103) pair_raw=(3000256, 1000103)
+merge 2/256: (256, 103) -> 257 (b'egg') had 35571 occurrences
+idx=258 pair=(101, 114) pair_raw=(101, 1000114)
+merge 3/256: (101, 114) -> 258 (b'er') had 2402 occurrences
+idx=259 pair=(50, 48) pair_raw=(50, 1000048)
+merge 4/256: (50, 48) -> 259 (b'20') had 2186 occurrences
+idx=260 pair=(105, 110) pair_raw=(105, 1000110)
+merge 5/256: (105, 110) -> 260 (b'in') had 2146 occurrences
+idx=261 pair=(111, 114) pair_raw=(111, 1000114)
+merge 6/256: (111, 114) -> 261 (b'or') had 2091 occurrences
+idx=262 pair=(116, 104) pair_raw=(116, 1000104)
+merge 7/256: (116, 104) -> 262 (b'th') had 2072 occurrences
+idx=263 pair=(97, 114) pair_raw=(97, 1000114)
+merge 8/256: (97, 114) -> 263 (b'ar') had 2035 occurrences
+idx=264 pair=(111, 110) pair_raw=(111, 1000110)
+merge 9/256: (111, 110) -> 264 (b'on') had 1965 occurrences
+idx=265 pair=(101, 100) pair_raw=(101, 1000100)
+merge 10/256: (101, 100) -> 265 (b'ed') had 1898 occurrences
+idx=266 pair=(97, 110) pair_raw=(97, 1000110)
+merge 11/256: (97, 110) -> 266 (b'an') had 1578 occurrences
+idx=267 pair=(262, 101) pair_raw=(262, 1000101)
+merge 12/256: (262, 101) -> 267 (b'the') had 1478 occurrences
+idx=268 pair=(114, 101) pair_raw=(114, 1000101)
+merge 13/256: (114, 101) -> 268 (b're') had 1478 occurrences
+idx=269 pair=(97, 108) pair_raw=(97, 1000108)
+merge 14/256: (97, 108) -> 269 (b'al') had 1319 occurrences
+idx=270 pair=(115, 116) pair_raw=(115, 1000116)
+merge 15/256: (115, 116) -> 270 (b'st') had 1297 occurrences
+idx=271 pair=(119, 105) pair_raw=(119, 1000105)
+merge 16/256: (119, 105) -> 271 (b'wi') had 1157 occurrences
+idx=272 pair=(114, 105) pair_raw=(114, 1000105)
+merge 17/256: (114, 105) -> 272 (b'ri') had 1156 occurrences
+idx=273 pair=(118, 265) pair_raw=(118, 1000265)
+merge 18/256: (118, 265) -> 273 (b'ved') had 1104 occurrences
+idx=274 pair=(259, 49) pair_raw=(259, 1000049)
+merge 19/256: (259, 49) -> 274 (b'201') had 980 occurrences
+idx=275 pair=(259, 50) pair_raw=(259, 1000050)
+merge 20/256: (259, 50) -> 275 (b'202') had 952 occurrences
+idx=276 pair=(99, 104) pair_raw=(99, 1000104)
+merge 21/256: (99, 104) -> 276 (b'ch') had 934 occurrences
+idx=277 pair=(102, 116) pair_raw=(102, 1000116)
+merge 22/256: (102, 116) -> 277 (b'ft') had 923 occurrences
+idx=278 pair=(97, 121) pair_raw=(97, 1000121)
+merge 23/256: (97, 121) -> 278 (b'ay') had 902 occurrences
+idx=279 pair=(114, 111) pair_raw=(114, 1000111)
+merge 24/256: (114, 111) -> 279 (b'ro') had 893 occurrences
+idx=280 pair=(115, 271) pair_raw=(115, 1000271)
+merge 25/256: (115, 271) -> 280 (b'swi') had 873 occurrences
+idx=281 pair=(280, 277) pair_raw=(280, 1000277)
+merge 26/256: (280, 277) -> 281 (b'swift') had 867 occurrences
+idx=282 pair=(98, 258) pair_raw=(98, 1000258)
+merge 27/256: (98, 258) -> 282 (b'ber') had 799 occurrences
+idx=283 pair=(97, 116) pair_raw=(97, 1000116)
+merge 28/256: (97, 116) -> 283 (b'at') had 792 occurrences
+idx=284 pair=(116, 111) pair_raw=(116, 1000111)
+merge 29/256: (116, 111) -> 284 (b'to') had 781 occurrences
+idx=285 pair=(101, 110) pair_raw=(101, 1000110)
+merge 30/256: (101, 110) -> 285 (b'en') had 752 occurrences
+idx=286 pair=(34, 46) pair_raw=(34, 1000046)
+merge 31/256: (34, 46) -> 286 (b'".') had 693 occurrences
+idx=287 pair=(101, 109) pair_raw=(101, 1000109)
+merge 32/256: (101, 109) -> 287 (b'em') had 687 occurrences
+idx=288 pair=(108, 261) pair_raw=(108, 1000261)
+merge 33/256: (108, 261) -> 288 (b'lor') had 686 occurrences
+idx=289 pair=(46, 10) pair_raw=(46, 1000010)
+merge 34/256: (46, 10) -> 289 (b'.\n') had 686 occurrences
+idx=290 pair=(260, 103) pair_raw=(260, 1000103)
+merge 35/256: (260, 103) -> 290 (b'ing') had 682 occurrences
+idx=291 pair=(101, 115) pair_raw=(101, 1000115)
+merge 36/256: (101, 115) -> 291 (b'es') had 681 occurrences
+idx=292 pair=(116, 272) pair_raw=(116, 1000272)
+merge 37/256: (116, 272) -> 292 (b'tri') had 669 occurrences
+idx=293 pair=(105, 103) pair_raw=(105, 1000103)
+merge 38/256: (105, 103) -> 293 (b'ig') had 663 occurrences
+idx=294 pair=(116, 278) pair_raw=(116, 1000278)
+merge 39/256: (116, 278) -> 294 (b'tay') had 652 occurrences
+idx=295 pair=(294, 288) pair_raw=(294, 1000288)
+merge 40/256: (294, 288) -> 295 (b'taylor') had 651 occurrences
+idx=296 pair=(101, 273) pair_raw=(101, 1000273)
+merge 41/256: (101, 273) -> 296 (b'eved') had 641 occurrences
+idx=297 pair=(268, 292) pair_raw=(268, 1000292)
+merge 42/256: (268, 292) -> 297 (b'retri') had 639 occurrences
+idx=298 pair=(297, 296) pair_raw=(297, 1000296)
+merge 43/256: (297, 296) -> 298 (b'retrieved') had 639 occurrences
+idx=299 pair=(105, 99) pair_raw=(105, 1000099)
+merge 44/256: (105, 99) -> 299 (b'ic') had 609 occurrences
+idx=300 pair=(108, 108) pair_raw=(108, 1000108)
+merge 45/256: (108, 108) -> 300 (b'll') had 606 occurrences
+idx=301 pair=(266, 100) pair_raw=(266, 1000100)
+merge 46/256: (266, 100) -> 301 (b'and') had 595 occurrences
+idx=302 pair=(97, 115) pair_raw=(97, 1000115)
+merge 47/256: (97, 115) -> 302 (b'as') had 559 occurrences
+idx=303 pair=(263, 276) pair_raw=(263, 1000276)
+merge 48/256: (263, 276) -> 303 (b'arch') had 552 occurrences
+idx=304 pair=(279, 109) pair_raw=(279, 1000109)
+merge 49/256: (279, 109) -> 304 (b'rom') had 537 occurrences
+idx=305 pair=(41, 46) pair_raw=(41, 1000046)
+merge 50/256: (41, 46) -> 305 (b').') had 533 occurrences
+idx=306 pair=(287, 282) pair_raw=(287, 1000282)
+merge 51/256: (287, 282) -> 306 (b'ember') had 529 occurrences
+idx=307 pair=(102, 304) pair_raw=(102, 1000304)
+merge 52/256: (102, 304) -> 307 (b'from') had 515 occurrences
+idx=308 pair=(111, 102) pair_raw=(111, 1000102)
+merge 53/256: (111, 102) -> 308 (b'of') had 474 occurrences
+idx=309 pair=(261, 293) pair_raw=(261, 1000293)
+merge 54/256: (261, 293) -> 309 (b'orig') had 457 occurrences
+idx=310 pair=(309, 260) pair_raw=(309, 1000260)
+merge 55/256: (309, 260) -> 310 (b'origin') had 457 occurrences
+idx=311 pair=(116, 105) pair_raw=(116, 1000105)
+merge 56/256: (116, 105) -> 311 (b'ti') had 455 occurrences
+idx=312 pair=(105, 273) pair_raw=(105, 1000273)
+merge 57/256: (105, 273) -> 312 (b'ived') had 455 occurrences
+idx=313 pair=(310, 269) pair_raw=(310, 1000269)
+merge 58/256: (310, 269) -> 313 (b'original') had 453 occurrences
+idx=314 pair=(100, 101) pair_raw=(100, 1000101)
+merge 59/256: (100, 101) -> 314 (b'de') had 451 occurrences
+idx=315 pair=(111, 117) pair_raw=(111, 1000117)
+merge 60/256: (111, 117) -> 315 (b'ou') had 442 occurrences
+idx=316 pair=(303, 312) pair_raw=(303, 1000312)
+merge 61/256: (303, 312) -> 316 (b'archived') had 440 occurrences
+idx=317 pair=(97, 109) pair_raw=(97, 1000109)
+merge 62/256: (97, 109) -> 317 (b'am') had 380 occurrences
+idx=318 pair=(108, 101) pair_raw=(108, 1000101)
+merge 63/256: (108, 101) -> 318 (b'le') had 378 occurrences
+idx=319 pair=(110, 111) pair_raw=(110, 1000111)
+merge 64/256: (110, 111) -> 319 (b'no') had 373 occurrences
+idx=320 pair=(263, 100) pair_raw=(263, 1000100)
+merge 65/256: (263, 100) -> 320 (b'ard') had 373 occurrences
+idx=321 pair=(39, 115) pair_raw=(39, 1000115)
+merge 66/256: (39, 115) -> 321 (b"'s") had 370 occurrences
+idx=322 pair=(105, 115) pair_raw=(105, 1000115)
+merge 67/256: (105, 115) -> 322 (b'is') had 370 occurrences
+idx=323 pair=(117, 115) pair_raw=(117, 1000115)
+merge 68/256: (117, 115) -> 323 (b'us') had 367 occurrences
+idx=324 pair=(110, 101) pair_raw=(110, 1000101)
+merge 69/256: (110, 101) -> 324 (b'ne') had 365 occurrences
+idx=325 pair=(105, 300) pair_raw=(105, 1000300)
+merge 70/256: (105, 300) -> 325 (b'ill') had 340 occurrences
+idx=326 pair=(46, 91) pair_raw=(46, 1000091)
+merge 71/256: (46, 91) -> 326 (b'.[') had 332 occurrences
+idx=327 pair=(108, 121) pair_raw=(108, 1000121)
+merge 72/256: (108, 121) -> 327 (b'ly') had 327 occurrences
+idx=328 pair=(115, 101) pair_raw=(115, 1000101)
+merge 73/256: (115, 101) -> 328 (b'se') had 326 occurrences
+idx=329 pair=(106, 117) pair_raw=(106, 1000117)
+merge 74/256: (106, 117) -> 329 (b'ju') had 321 occurrences
+idx=330 pair=(102, 261) pair_raw=(102, 1000261)
+merge 75/256: (102, 261) -> 330 (b'for') had 318 occurrences
+idx=331 pair=(104, 258) pair_raw=(104, 1000258)
+merge 76/256: (104, 258) -> 331 (b'her') had 313 occurrences
+idx=332 pair=(105, 116) pair_raw=(105, 1000116)
+merge 77/256: (105, 116) -> 332 (b'it') had 299 occurrences
+idx=333 pair=(105, 264) pair_raw=(105, 1000264)
+merge 78/256: (105, 264) -> 333 (b'ion') had 299 occurrences
+idx=334 pair=(111, 99) pair_raw=(111, 1000099)
+merge 79/256: (111, 99) -> 334 (b'oc') had 293 occurrences
+idx=335 pair=(117, 109) pair_raw=(117, 1000109)
+merge 80/256: (117, 109) -> 335 (b'um') had 282 occurrences
+idx=336 pair=(115, 104) pair_raw=(115, 1000104)
+merge 81/256: (115, 104) -> 336 (b'sh') had 279 occurrences
+idx=337 pair=(264, 101) pair_raw=(264, 1000101)
+merge 82/256: (264, 101) -> 337 (b'one') had 275 occurrences
+idx=338 pair=(263, 121) pair_raw=(263, 1000121)
+merge 83/256: (263, 121) -> 338 (b'ary') had 267 occurrences
+idx=339 pair=(97, 117) pair_raw=(97, 1000117)
+merge 84/256: (97, 117) -> 339 (b'au') had 264 occurrences
+idx=340 pair=(117, 114) pair_raw=(117, 1000114)
+merge 85/256: (117, 114) -> 340 (b'ur') had 256 occurrences
+idx=341 pair=(103, 117) pair_raw=(103, 1000117)
+merge 86/256: (103, 117) -> 341 (b'gu') had 236 occurrences
+idx=342 pair=(98, 111) pair_raw=(98, 1000111)
+merge 87/256: (98, 111) -> 342 (b'bo') had 236 occurrences
+idx=343 pair=(97, 99) pair_raw=(97, 1000099)
+merge 88/256: (97, 99) -> 343 (b'ac') had 235 occurrences
+idx=344 pair=(109, 323) pair_raw=(109, 1000323)
+merge 89/256: (109, 323) -> 344 (b'mus') had 229 occurrences
+idx=345 pair=(97, 112) pair_raw=(97, 1000112)
+merge 90/256: (97, 112) -> 345 (b'ap') had 228 occurrences
+idx=346 pair=(117, 338) pair_raw=(117, 1000338)
+merge 91/256: (117, 338) -> 346 (b'uary') had 225 occurrences
+idx=347 pair=(99, 111) pair_raw=(99, 1000111)
+merge 92/256: (99, 111) -> 347 (b'co') had 223 occurrences
+idx=348 pair=(319, 118) pair_raw=(319, 1000118)
+merge 93/256: (319, 118) -> 348 (b'nov') had 222 occurrences
+idx=349 pair=(115, 264) pair_raw=(115, 1000264)
+merge 94/256: (115, 264) -> 349 (b'son') had 221 occurrences
+idx=350 pair=(344, 299) pair_raw=(1000344, 3000299)
+merge 95/256: (344, 299) -> 350 (b'music') had 221 occurrences
+idx=351 pair=(348, 306) pair_raw=(348, 1000306)
+merge 96/256: (348, 306) -> 351 (b'november') had 221 occurrences
+idx=352 pair=(98, 101) pair_raw=(98, 1000101)
+merge 97/256: (98, 101) -> 352 (b'be') had 217 occurrences
+idx=353 pair=(102, 101) pair_raw=(102, 1000101)
+merge 98/256: (102, 101) -> 353 (b'fe') had 215 occurrences
+idx=354 pair=(98, 325) pair_raw=(98, 1000325)
+merge 99/256: (98, 325) -> 354 (b'bill') had 214 occurrences
+idx=355 pair=(314, 99) pair_raw=(314, 1000099)
+merge 100/256: (314, 99) -> 355 (b'dec') had 211 occurrences
+idx=356 pair=(111, 112) pair_raw=(111, 1000112)
+merge 101/256: (111, 112) -> 356 (b'op') had 210 occurrences
+idx=357 pair=(97, 100) pair_raw=(97, 1000100)
+merge 102/256: (97, 100) -> 357 (b'ad') had 207 occurrences
+idx=358 pair=(118, 258) pair_raw=(118, 1000258)
+merge 103/256: (118, 258) -> 358 (b'ver') had 206 occurrences
+idx=359 pair=(285, 116) pair_raw=(285, 1000116)
+merge 104/256: (285, 116) -> 359 (b'ent') had 202 occurrences
+idx=360 pair=(334, 284) pair_raw=(334, 1000284)
+merge 105/256: (334, 284) -> 360 (b'octo') had 198 occurrences
+idx=361 pair=(360, 282) pair_raw=(360, 1000282)
+merge 106/256: (360, 282) -> 361 (b'october') had 197 occurrences
+idx=362 pair=(116, 114) pair_raw=(116, 1000114)
+merge 107/256: (116, 114) -> 362 (b'tr') had 195 occurrences
+idx=363 pair=(355, 306) pair_raw=(355, 1000306)
+merge 108/256: (355, 306) -> 363 (b'december') had 194 occurrences
+idx=364 pair=(354, 342) pair_raw=(354, 1000342)
+merge 109/256: (354, 342) -> 364 (b'billbo') had 191 occurrences
+idx=365 pair=(271, 262) pair_raw=(271, 1000262)
+merge 110/256: (271, 262) -> 365 (b'with') had 190 occurrences
+idx=366 pair=(364, 320) pair_raw=(364, 1000320)
+merge 111/256: (364, 320) -> 366 (b'billboard') had 190 occurrences
+idx=367 pair=(105, 101) pair_raw=(105, 1000101)
+merge 112/256: (105, 101) -> 367 (b'ie') had 187 occurrences
+idx=368 pair=(118, 101) pair_raw=(118, 1000101)
+merge 113/256: (118, 101) -> 368 (b've') had 184 occurrences
+idx=369 pair=(336, 101) pair_raw=(336, 1000101)
+merge 114/256: (336, 101) -> 369 (b'she') had 184 occurrences
+idx=370 pair=(49, 48) pair_raw=(49, 1000048)
+merge 115/256: (49, 48) -> 370 (b'10') had 184 occurrences
+idx=371 pair=(108, 111) pair_raw=(108, 1000111)
+merge 116/256: (108, 111) -> 371 (b'lo') had 182 occurrences
+idx=372 pair=(112, 104) pair_raw=(112, 1000104)
+merge 117/256: (112, 104) -> 372 (b'ph') had 176 occurrences
+idx=373 pair=(109, 101) pair_raw=(109, 1000101)
+merge 118/256: (109, 101) -> 373 (b'me') had 174 occurrences
+idx=374 pair=(268, 99) pair_raw=(268, 1000099)
+merge 119/256: (268, 99) -> 374 (b'rec') had 173 occurrences
+idx=375 pair=(269, 98) pair_raw=(269, 1000098)
+merge 120/256: (269, 98) -> 375 (b'alb') had 172 occurrences
+idx=376 pair=(272, 116) pair_raw=(272, 1000116)
+merge 121/256: (272, 116) -> 376 (b'rit') had 172 occurrences
+idx=377 pair=(315, 110) pair_raw=(315, 1000110)
+merge 122/256: (315, 110) -> 377 (b'oun') had 170 occurrences
+idx=378 pair=(375, 335) pair_raw=(375, 1000335)
+merge 123/256: (375, 335) -> 378 (b'album') had 170 occurrences
+idx=379 pair=(259, 48) pair_raw=(259, 1000048)
+merge 124/256: (259, 48) -> 379 (b'200') had 170 occurrences
+idx=380 pair=(329, 327) pair_raw=(329, 1000327)
+merge 125/256: (329, 327) -> 380 (b'july') had 170 occurrences
+idx=381 pair=(283, 333) pair_raw=(283, 1000333)
+merge 126/256: (283, 333) -> 381 (b'ation') had 169 occurrences
+idx=382 pair=(349, 103) pair_raw=(349, 1000103)
+merge 127/256: (349, 103) -> 382 (b'song') had 166 occurrences
+idx=383 pair=(101, 263) pair_raw=(101, 1000263)
+merge 128/256: (101, 263) -> 383 (b'ear') had 164 occurrences
+idx=384 pair=(339, 341) pair_raw=(339, 1000341)
+merge 129/256: (339, 341) -> 384 (b'augu') had 164 occurrences
+idx=385 pair=(384, 270) pair_raw=(384, 1000270)
+merge 130/256: (384, 270) -> 385 (b'august') had 164 occurrences
+idx=386 pair=(93, 91) pair_raw=(93, 1000091)
+merge 131/256: (93, 91) -> 386 (b'][') had 163 occurrences
+idx=387 pair=(102, 105) pair_raw=(102, 1000105)
+merge 132/256: (102, 105) -> 387 (b'fi') had 161 occurrences
+idx=388 pair=(108, 105) pair_raw=(108, 1000105)
+merge 133/256: (108, 105) -> 388 (b'li') had 160 occurrences
+idx=389 pair=(324, 119) pair_raw=(324, 1000119)
+merge 134/256: (324, 119) -> 389 (b'new') had 158 occurrences
+idx=390 pair=(98, 114) pair_raw=(98, 1000114)
+merge 135/256: (98, 114) -> 390 (b'br') had 154 occurrences
+idx=391 pair=(97, 119) pair_raw=(97, 1000119)
+merge 136/256: (97, 119) -> 391 (b'aw') had 148 occurrences
+idx=392 pair=(115, 112) pair_raw=(115, 1000112)
+merge 137/256: (115, 112) -> 392 (b'sp') had 141 occurrences
+idx=393 pair=(109, 97) pair_raw=(109, 1000097)
+merge 138/256: (109, 97) -> 393 (b'ma') had 140 occurrences
+idx=394 pair=(116, 115) pair_raw=(116, 1000115)
+merge 139/256: (116, 115) -> 394 (b'ts') had 138 occurrences
+idx=395 pair=(108, 100) pair_raw=(108, 1000100)
+merge 140/256: (108, 100) -> 395 (b'ld') had 138 occurrences
+idx=396 pair=(103, 101) pair_raw=(103, 1000101)
+merge 141/256: (103, 101) -> 396 (b'ge') had 137 occurrences
+idx=397 pair=(104, 111) pair_raw=(104, 1000111)
+merge 142/256: (104, 111) -> 397 (b'ho') had 136 occurrences
+idx=398 pair=(115, 290) pair_raw=(115, 1000290)
+merge 143/256: (115, 290) -> 398 (b'sing') had 134 occurrences
+idx=399 pair=(105, 100) pair_raw=(105, 1000100)
+merge 144/256: (105, 100) -> 399 (b'id') had 130 occurrences
+idx=400 pair=(119, 101) pair_raw=(119, 1000101)
+merge 145/256: (119, 101) -> 400 (b'we') had 129 occurrences
+idx=401 pair=(329, 324) pair_raw=(329, 1000324)
+merge 146/256: (329, 324) -> 401 (b'june') had 129 occurrences
+idx=402 pair=(372, 337) pair_raw=(372, 1000337)
+merge 147/256: (372, 337) -> 402 (b'phone') had 124 occurrences
+idx=403 pair=(49, 57) pair_raw=(49, 1000057)
+merge 148/256: (49, 57) -> 403 (b'19') had 124 occurrences
+idx=404 pair=(112, 116) pair_raw=(112, 1000116)
+merge 149/256: (112, 116) -> 404 (b'pt') had 123 occurrences
+idx=405 pair=(391, 320) pair_raw=(391, 1000320)
+merge 150/256: (391, 320) -> 405 (b'award') had 121 occurrences
+idx=406 pair=(105, 402) pair_raw=(105, 1000402)
+merge 151/256: (105, 402) -> 406 (b'iphone') had 120 occurrences
+idx=407 pair=(261, 100) pair_raw=(261, 1000100)
+merge 152/256: (261, 100) -> 407 (b'ord') had 120 occurrences
+idx=408 pair=(109, 111) pair_raw=(109, 1000111)
+merge 153/256: (109, 111) -> 408 (b'mo') had 119 occurrences
+idx=409 pair=(116, 101) pair_raw=(116, 1000101)
+merge 154/256: (116, 101) -> 409 (b'te') had 119 occurrences
+idx=410 pair=(109, 278) pair_raw=(109, 1000278)
+merge 155/256: (109, 278) -> 410 (b'may') had 119 occurrences
+idx=411 pair=(44, 91) pair_raw=(44, 1000091)
+merge 156/256: (44, 91) -> 411 (b',[') had 118 occurrences
+idx=412 pair=(353, 390) pair_raw=(353, 1000390)
+merge 157/256: (353, 390) -> 412 (b'febr') had 118 occurrences
+idx=413 pair=(412, 346) pair_raw=(412, 1000346)
+merge 158/256: (412, 346) -> 413 (b'february') had 118 occurrences
+idx=414 pair=(99, 101) pair_raw=(99, 1000101)
+merge 159/256: (99, 101) -> 414 (b'ce') had 117 occurrences
+idx=415 pair=(99, 264) pair_raw=(99, 1000264)
+merge 160/256: (99, 264) -> 415 (b'con') had 116 occurrences
+idx=416 pair=(345, 272) pair_raw=(345, 1000272)
+merge 161/256: (345, 272) -> 416 (b'apri') had 115 occurrences
+idx=417 pair=(416, 108) pair_raw=(416, 1000108)
+merge 162/256: (416, 108) -> 417 (b'april') had 115 occurrences
+idx=418 pair=(107, 101) pair_raw=(107, 1000101)
+merge 163/256: (107, 101) -> 418 (b'ke') had 114 occurrences
+idx=419 pair=(258, 115) pair_raw=(258, 1000115)
+merge 164/256: (258, 115) -> 419 (b'ers') had 114 occurrences
+idx=420 pair=(328, 404) pair_raw=(328, 1000404)
+merge 165/256: (328, 404) -> 420 (b'sept') had 112 occurrences
+idx=421 pair=(420, 306) pair_raw=(420, 1000306)
+merge 166/256: (420, 306) -> 421 (b'september') had 112 occurrences
+idx=422 pair=(99, 377) pair_raw=(99, 1000377)
+merge 167/256: (99, 377) -> 422 (b'coun') had 111 occurrences
+idx=423 pair=(263, 116) pair_raw=(263, 1000116)
+merge 168/256: (263, 116) -> 423 (b'art') had 110 occurrences
+idx=424 pair=(103, 114) pair_raw=(103, 1000114)
+merge 169/256: (103, 114) -> 424 (b'gr') had 110 occurrences
+idx=425 pair=(119, 104) pair_raw=(119, 1000104)
+merge 170/256: (119, 104) -> 425 (b'wh') had 110 occurrences
+idx=426 pair=(291, 115) pair_raw=(291, 1000115)
+merge 171/256: (291, 115) -> 426 (b'ess') had 109 occurrences
+idx=427 pair=(109, 266) pair_raw=(109, 1000266)
+merge 172/256: (109, 266) -> 427 (b'man') had 109 occurrences
+idx=428 pair=(269, 108) pair_raw=(269, 1000108)
+merge 173/256: (269, 108) -> 428 (b'all') had 109 occurrences
+idx=429 pair=(362, 121) pair_raw=(362, 1000121)
+merge 174/256: (362, 121) -> 429 (b'try') had 108 occurrences
+idx=430 pair=(106, 266) pair_raw=(106, 1000266)
+merge 175/256: (106, 266) -> 430 (b'jan') had 108 occurrences
+idx=431 pair=(119, 376) pair_raw=(119, 1000376)
+merge 176/256: (119, 376) -> 431 (b'writ') had 107 occurrences
+idx=432 pair=(293, 104) pair_raw=(293, 1000104)
+merge 177/256: (293, 104) -> 432 (b'igh') had 107 occurrences
+idx=433 pair=(311, 270) pair_raw=(311, 1000270)
+merge 178/256: (311, 270) -> 433 (b'tist') had 106 occurrences
+idx=434 pair=(49, 51) pair_raw=(49, 1000051)
+merge 179/256: (49, 51) -> 434 (b'13') had 106 occurrences
+idx=435 pair=(121, 383) pair_raw=(121, 1000383)
+merge 180/256: (121, 383) -> 435 (b'year') had 106 occurrences
+idx=436 pair=(430, 346) pair_raw=(430, 1000346)
+merge 181/256: (430, 346) -> 436 (b'january') had 106 occurrences
+idx=437 pair=(284, 340) pair_raw=(284, 1000340)
+merge 182/256: (284, 340) -> 437 (b'tour') had 105 occurrences
+idx=438 pair=(374, 407) pair_raw=(374, 1000407)
+merge 183/256: (374, 407) -> 438 (b'record') had 105 occurrences
+idx=439 pair=(112, 258) pair_raw=(112, 1000258)
+merge 184/256: (112, 258) -> 439 (b'per') had 104 occurrences
+idx=440 pair=(263, 433) pair_raw=(263, 1000433)
+merge 185/256: (263, 433) -> 440 (b'artist') had 104 occurrences
+idx=441 pair=(422, 429) pair_raw=(422, 1000429)
+merge 186/256: (422, 429) -> 441 (b'country') had 104 occurrences
+idx=442 pair=(50, 49) pair_raw=(50, 1000049)
+merge 187/256: (50, 49) -> 442 (b'21') had 103 occurrences
+idx=443 pair=(109, 303) pair_raw=(109, 1000303)
+merge 188/256: (109, 303) -> 443 (b'march') had 102 occurrences
+idx=444 pair=(117, 110) pair_raw=(117, 1000110)
+merge 189/256: (117, 110) -> 444 (b'un') had 100 occurrences
+idx=445 pair=(117, 116) pair_raw=(117, 1000116)
+merge 190/256: (117, 116) -> 445 (b'ut') had 99 occurrences
+idx=446 pair=(111, 108) pair_raw=(111, 1000108)
+merge 191/256: (111, 108) -> 446 (b'ol') had 98 occurrences
+idx=447 pair=(105, 270) pair_raw=(105, 1000270)
+merge 192/256: (105, 270) -> 447 (b'ist') had 97 occurrences
+idx=448 pair=(226, 128) pair_raw=(226, 1000128)
+merge 193/256: (226, 128) -> 448 (b'\xe2\x80') had 97 occurrences
+idx=449 pair=(50, 51) pair_raw=(50, 1000051)
+merge 194/256: (50, 51) -> 449 (b'23') had 96 occurrences
+idx=450 pair=(112, 356) pair_raw=(112, 1000356)
+merge 195/256: (112, 356) -> 450 (b'pop') had 96 occurrences
+idx=451 pair=(119, 302) pair_raw=(119, 1000302)
+merge 196/256: (119, 302) -> 451 (b'was') had 95 occurrences
+idx=452 pair=(116, 258) pair_raw=(116, 1000258)
+merge 197/256: (116, 258) -> 452 (b'ter') had 94 occurrences
+idx=453 pair=(105, 97) pair_raw=(105, 1000097)
+merge 198/256: (105, 97) -> 453 (b'ia') had 93 occurrences
+idx=454 pair=(258, 299) pair_raw=(258, 1000299)
+merge 199/256: (258, 299) -> 454 (b'eric') had 93 occurrences
+idx=455 pair=(49, 56) pair_raw=(49, 1000056)
+merge 200/256: (49, 56) -> 455 (b'18') had 93 occurrences
+idx=456 pair=(115, 117) pair_raw=(115, 1000117)
+merge 201/256: (115, 117) -> 456 (b'su') had 91 occurrences
+idx=457 pair=(115, 111) pair_raw=(115, 1000111)
+merge 202/256: (115, 111) -> 457 (b'so') had 91 occurrences
+idx=458 pair=(105, 266) pair_raw=(105, 1000266)
+merge 203/256: (105, 266) -> 458 (b'ian') had 91 occurrences
+idx=459 pair=(49, 50) pair_raw=(49, 1000050)
+merge 204/256: (49, 50) -> 459 (b'12') had 90 occurrences
+idx=460 pair=(98, 121) pair_raw=(98, 1000121)
+merge 205/256: (98, 121) -> 460 (b'by') had 89 occurrences
+idx=461 pair=(317, 454) pair_raw=(317, 1000454)
+merge 206/256: (317, 454) -> 461 (b'americ') had 88 occurrences
+idx=462 pair=(50, 52) pair_raw=(50, 1000052)
+merge 207/256: (50, 52) -> 462 (b'24') had 87 occurrences
+idx=463 pair=(315, 114) pair_raw=(315, 1000114)
+merge 208/256: (315, 114) -> 463 (b'our') had 86 occurrences
+idx=464 pair=(93, 10) pair_raw=(93, 1000010)
+merge 209/256: (93, 10) -> 464 (b']\n') had 86 occurrences
+idx=465 pair=(49, 55) pair_raw=(49, 1000055)
+merge 210/256: (49, 55) -> 465 (b'17') had 84 occurrences
+idx=466 pair=(50, 50) pair_raw=(50, 1000050)
+merge 211/256: (50, 50) -> 466 (b'22') had 84 occurrences
+idx=467 pair=(49, 52) pair_raw=(49, 1000052)
+merge 212/256: (49, 52) -> 467 (b'14') had 82 occurrences
+idx=468 pair=(117, 108) pair_raw=(117, 1000108)
+merge 213/256: (117, 108) -> 468 (b'ul') had 81 occurrences
+idx=469 pair=(118, 105) pair_raw=(118, 1000105)
+merge 214/256: (118, 105) -> 469 (b'vi') had 80 occurrences
+idx=470 pair=(382, 431) pair_raw=(382, 1000431)
+merge 215/256: (382, 431) -> 470 (b'songwrit') had 80 occurrences
+idx=471 pair=(119, 111) pair_raw=(119, 1000111)
+merge 216/256: (119, 111) -> 471 (b'wo') had 80 occurrences
+idx=472 pair=(311, 264) pair_raw=(311, 1000264)
+merge 217/256: (311, 264) -> 472 (b'tion') had 79 occurrences
+idx=473 pair=(461, 266) pair_raw=(461, 1000266)
+merge 218/256: (461, 266) -> 473 (b'american') had 79 occurrences
+idx=474 pair=(300, 290) pair_raw=(300, 1000290)
+merge 219/256: (300, 290) -> 474 (b'lling') had 78 occurrences
+idx=475 pair=(405, 115) pair_raw=(405, 1000115)
+merge 220/256: (405, 115) -> 475 (b'awards') had 77 occurrences
+idx=476 pair=(119, 261) pair_raw=(119, 1000261)
+merge 221/256: (119, 261) -> 476 (b'wor') had 77 occurrences
+idx=477 pair=(111, 119) pair_raw=(111, 1000119)
+merge 222/256: (111, 119) -> 477 (b'ow') had 77 occurrences
+idx=478 pair=(49, 49) pair_raw=(49, 1000049)
+merge 223/256: (49, 49) -> 478 (b'11') had 77 occurrences
+idx=479 pair=(100, 105) pair_raw=(100, 1000105)
+merge 224/256: (100, 105) -> 479 (b'di') had 75 occurrences
+idx=480 pair=(347, 109) pair_raw=(347, 1000109)
+merge 225/256: (347, 109) -> 480 (b'com') had 75 occurrences
+idx=481 pair=(105, 114) pair_raw=(105, 1000114)
+merge 226/256: (105, 114) -> 481 (b'ir') had 75 occurrences
+idx=482 pair=(311, 109) pair_raw=(311, 1000109)
+merge 227/256: (311, 109) -> 482 (b'tim') had 75 occurrences
+idx=483 pair=(109, 121) pair_raw=(109, 1000121)
+merge 228/256: (109, 121) -> 483 (b'my') had 73 occurrences
+idx=484 pair=(387, 114) pair_raw=(387, 1000114)
+merge 229/256: (387, 114) -> 484 (b'fir') had 72 occurrences
+idx=485 pair=(48, 48) pair_raw=(48, 1000048)
+merge 230/256: (48, 48) -> 485 (b'00') had 71 occurrences
+idx=486 pair=(97, 98) pair_raw=(97, 1000098)
+merge 231/256: (97, 98) -> 486 (b'ab') had 71 occurrences
+idx=487 pair=(50, 54) pair_raw=(50, 1000054)
+merge 232/256: (50, 54) -> 487 (b'26') had 71 occurrences
+idx=488 pair=(50, 57) pair_raw=(50, 1000057)
+merge 233/256: (50, 57) -> 488 (b'29') had 71 occurrences
+idx=489 pair=(49, 53) pair_raw=(49, 1000053)
+merge 234/256: (49, 53) -> 489 (b'15') had 71 occurrences
+idx=490 pair=(112, 279) pair_raw=(112, 1000279)
+merge 235/256: (112, 279) -> 490 (b'pro') had 70 occurrences
+idx=491 pair=(262, 258) pair_raw=(262, 1000258)
+merge 236/256: (262, 258) -> 491 (b'ther') had 70 occurrences
+idx=492 pair=(97, 107) pair_raw=(97, 1000107)
+merge 237/256: (97, 107) -> 492 (b'ak') had 70 occurrences
+idx=493 pair=(484, 270) pair_raw=(484, 1000270)
+merge 238/256: (484, 270) -> 493 (b'first') had 70 occurrences
+idx=494 pair=(50, 53) pair_raw=(50, 1000053)
+merge 239/256: (50, 53) -> 494 (b'25') had 70 occurrences
+idx=495 pair=(50, 55) pair_raw=(50, 1000055)
+merge 240/256: (50, 55) -> 495 (b'27') had 70 occurrences
+idx=496 pair=(260, 101) pair_raw=(260, 1000101)
+merge 241/256: (260, 101) -> 496 (b'ine') had 69 occurrences
+idx=497 pair=(101, 108) pair_raw=(101, 1000108)
+merge 242/256: (101, 108) -> 497 (b'el') had 69 occurrences
+idx=498 pair=(263, 101) pair_raw=(3000263, 101)
+merge 243/256: (263, 101) -> 498 (b'are') had 68 occurrences
+idx=499 pair=(101, 120) pair_raw=(101, 1000120)
+merge 244/256: (101, 120) -> 499 (b'ex') had 68 occurrences
+idx=500 pair=(106, 111) pair_raw=(106, 1000111)
+merge 245/256: (106, 111) -> 500 (b'jo') had 68 occurrences
+idx=501 pair=(104, 302) pair_raw=(104, 1000302)
+merge 246/256: (104, 302) -> 501 (b'has') had 68 occurrences
+idx=502 pair=(284, 112) pair_raw=(284, 1000112)
+merge 247/256: (284, 112) -> 502 (b'top') had 67 occurrences
+idx=503 pair=(270, 337) pair_raw=(270, 1000337)
+merge 248/256: (270, 337) -> 503 (b'stone') had 67 occurrences
+idx=504 pair=(285, 100) pair_raw=(285, 1000100)
+merge 249/256: (285, 100) -> 504 (b'end') had 67 occurrences
+idx=505 pair=(51, 48) pair_raw=(51, 1000048)
+merge 250/256: (51, 48) -> 505 (b'30') had 67 occurrences
+idx=506 pair=(311, 373) pair_raw=(311, 1000373)
+merge 251/256: (311, 373) -> 506 (b'time') had 66 occurrences
+idx=507 pair=(262, 283) pair_raw=(262, 1000283)
+merge 252/256: (262, 283) -> 507 (b'that') had 65 occurrences
+idx=508 pair=(283, 265) pair_raw=(283, 1000265)
+merge 253/256: (283, 265) -> 508 (b'ated') had 65 occurrences
+idx=509 pair=(118, 367) pair_raw=(118, 1000367)
+merge 254/256: (118, 367) -> 509 (b'vie') had 64 occurrences
+idx=510 pair=(279, 474) pair_raw=(279, 1000474)
+merge 255/256: (279, 474) -> 510 (b'rolling') had 64 occurrences
+idx=511 pair=(285, 110) pair_raw=(285, 1000110)
+merge 256/256: (285, 110) -> 511 (b'enn') had 63 occurrences
+Training CapitalSpaceOutTokenizer took 36.06 seconds
+Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on:
+ 
+egg egg egg
+Egg Egg Egg
+EGG EGG EGG
+eGG eGG eGG
+egG egG egG
+EGg EGg EGg
+EgG EgG EgG
+eGg eGg eGg
+
+[10, 257, 40000257, 40000257, 10, 1000257, 41000257, 41000257, 10, 2000257, 42000257, 42000257, 10, 3000257, 43000257, 43000257, 10, 256, 1000103, 40000256, 1000103, 40000256, 1000103, 10, 2000256, 103, 42000256, 103, 42000256, 103, 10, 1000256, 1000103, 41000256, 1000103, 41000256, 1000103, 10, 3000256, 103, 43000256, 103, 43000256, 103, 10]
+            10 b'\n' [10] 
+
+           257 b'egg' (3000256, 1000103) egg
+      40000257 b'egg' (3000256, 1000103)  egg
+      40000257 b'egg' (3000256, 1000103)  egg
+            10 b'\n' [10] 
+
+       1000257 b'egg' (3000256, 1000103) Egg
+      41000257 b'egg' (3000256, 1000103)  Egg
+      41000257 b'egg' (3000256, 1000103)  Egg
+            10 b'\n' [10] 
+
+       2000257 b'egg' (3000256, 1000103) EGG
+      42000257 b'egg' (3000256, 1000103)  EGG
+      42000257 b'egg' (3000256, 1000103)  EGG
+            10 b'\n' [10] 
+
+       3000257 b'egg' (3000256, 1000103) eGG
+      43000257 b'egg' (3000256, 1000103)  eGG
+      43000257 b'egg' (3000256, 1000103)  eGG
+            10 b'\n' [10] 
+
+           256 b'eg' (101, 1000103) eg
+       1000103 b'g' [103] G
+      40000256 b'eg' (101, 1000103)  eg
+       1000103 b'g' [103] G
+      40000256 b'eg' (101, 1000103)  eg
+       1000103 b'g' [103] G
+            10 b'\n' [10] 
+
+       2000256 b'eg' (101, 1000103) EG
+           103 b'g' [103] g
+      42000256 b'eg' (101, 1000103)  EG
+           103 b'g' [103] g
+      42000256 b'eg' (101, 1000103)  EG
+           103 b'g' [103] g
+            10 b'\n' [10] 
+
+       1000256 b'eg' (101, 1000103) Eg
+       1000103 b'g' [103] G
+      41000256 b'eg' (101, 1000103)  Eg
+       1000103 b'g' [103] G
+      41000256 b'eg' (101, 1000103)  Eg
+       1000103 b'g' [103] G
+            10 b'\n' [10] 
+
+       3000256 b'eg' (101, 1000103) eG
+           103 b'g' [103] g
+      43000256 b'eg' (101, 1000103)  eG
+           103 b'g' [103] g
+      43000256 b'eg' (101, 1000103)  eG
+           103 b'g' [103] g
+            10 b'\n' [10] 
+
+Test String and token Lengths: 97 45
+Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on:
+ 
+iphone iphone iphone
+Iphone Iphone Iphone
+IPHONE IPHONE IPHONE
+iPhone iPhone iPhone
+IPhone IPhone IPhone
+iPHONE iPHONE iPHONE
+iPhoNe IPhoNe IPhoNe
+iphONE iphONE iphONE
+iPhoNE IPhoNE IPhoNE
+
+[10, 406, 40000406, 40000406, 10, 1000406, 41000406, 41000406, 10, 2000406, 42000406, 42000406, 10, 3000406, 43000406, 43000406, 10, 1000105, 1000402, 41000105, 1000402, 41000105, 1000402, 10, 105, 2000402, 40000105, 2000402, 40000105, 2000402, 10, 105, 1000372, 3000264, 101, 41000105, 1000372, 3000264, 101, 41000105, 1000372, 3000264, 101, 10, 105, 372, 2000337, 40000105, 372, 2000337, 40000105, 372, 2000337, 10, 105, 1000372, 3000264, 1000101, 41000105, 1000372, 3000264, 1000101, 41000105, 1000372, 3000264, 1000101, 10]
+            10 b'\n' [10] 
+
+           406 b'iphone' (105, 1000402) iphone
+      40000406 b'iphone' (105, 1000402)  iphone
+      40000406 b'iphone' (105, 1000402)  iphone
+            10 b'\n' [10] 
+
+       1000406 b'iphone' (105, 1000402) Iphone
+      41000406 b'iphone' (105, 1000402)  Iphone
+      41000406 b'iphone' (105, 1000402)  Iphone
+            10 b'\n' [10] 
+
+       2000406 b'iphone' (105, 1000402) IPHONE
+      42000406 b'iphone' (105, 1000402)  IPHONE
+      42000406 b'iphone' (105, 1000402)  IPHONE
+            10 b'\n' [10] 
+
+       3000406 b'iphone' (105, 1000402) iPhone
+      43000406 b'iphone' (105, 1000402)  iPhone
+      43000406 b'iphone' (105, 1000402)  iPhone
+            10 b'\n' [10] 
+
+       1000105 b'i' [105] I
+       1000402 b'phone' (372, 1000337) Phone
+      41000105 b'i' [105]  I
+       1000402 b'phone' (372, 1000337) Phone
+      41000105 b'i' [105]  I
+       1000402 b'phone' (372, 1000337) Phone
+            10 b'\n' [10] 
+
+           105 b'i' [105] i
+       2000402 b'phone' (372, 1000337) PHONE
+      40000105 b'i' [105]  i
+       2000402 b'phone' (372, 1000337) PHONE
+      40000105 b'i' [105]  i
+       2000402 b'phone' (372, 1000337) PHONE
+            10 b'\n' [10] 
+
+           105 b'i' [105] i
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+           101 b'e' [101] e
+      41000105 b'i' [105]  I
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+           101 b'e' [101] e
+      41000105 b'i' [105]  I
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+           101 b'e' [101] e
+            10 b'\n' [10] 
+
+           105 b'i' [105] i
+           372 b'ph' (112, 1000104) ph
+       2000337 b'one' (264, 1000101) ONE
+      40000105 b'i' [105]  i
+           372 b'ph' (112, 1000104) ph
+       2000337 b'one' (264, 1000101) ONE
+      40000105 b'i' [105]  i
+           372 b'ph' (112, 1000104) ph
+       2000337 b'one' (264, 1000101) ONE
+            10 b'\n' [10] 
+
+           105 b'i' [105] i
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+       1000101 b'e' [101] E
+      41000105 b'i' [105]  I
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+       1000101 b'e' [101] E
+      41000105 b'i' [105]  I
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+       1000101 b'e' [101] E
+            10 b'\n' [10] 
+
+Test String and token Lengths: 190 67
+Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on egg.txt::
+Test String and token Lengths: 328982 114830
+Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on input.txt::
+Test String and token Lengths: 1115394 579527
+Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on taylorswift.txt::
+Test String and token Lengths: 185561 77751
+Testing CapitalSpaceOutTokenizer took 6.89 seconds
+256 b'eg' (101, 1000103) eg Eg EG eG
+257 b'egg' (3000256, 1000103) egg Egg EGG eGG
+258 b'er' (101, 1000114) er Er ER eR
+259 b'20' (50, 1000048) 20 20 20 20
+260 b'in' (105, 1000110) in In IN iN
+261 b'or' (111, 1000114) or Or OR oR
+262 b'th' (116, 1000104) th Th TH tH
+263 b'ar' (97, 1000114) ar Ar AR aR
+264 b'on' (111, 1000110) on On ON oN
+265 b'ed' (101, 1000100) ed Ed ED eD
+266 b'an' (97, 1000110) an An AN aN
+267 b'the' (262, 1000101) the The THE thE
+268 b're' (114, 1000101) re Re RE rE
+269 b'al' (97, 1000108) al Al AL aL
+270 b'st' (115, 1000116) st St ST sT
+271 b'wi' (119, 1000105) wi Wi WI wI
+272 b'ri' (114, 1000105) ri Ri RI rI
+273 b'ved' (118, 1000265) ved Ved VED vEd
+274 b'201' (259, 1000049) 201 201 201 201
+275 b'202' (259, 1000050) 202 202 202 202
+276 b'ch' (99, 1000104) ch Ch CH cH
+277 b'ft' (102, 1000116) ft Ft FT fT
+278 b'ay' (97, 1000121) ay Ay AY aY
+279 b'ro' (114, 1000111) ro Ro RO rO
+280 b'swi' (115, 1000271) swi Swi SWI sWi
+281 b'swift' (280, 1000277) swift Swift SWIFT swiFt
+282 b'ber' (98, 1000258) ber Ber BER bEr
+283 b'at' (97, 1000116) at At AT aT
+284 b'to' (116, 1000111) to To TO tO
+285 b'en' (101, 1000110) en En EN eN
+286 b'".' (34, 1000046) ". ". ". ".
+287 b'em' (101, 1000109) em Em EM eM
+288 b'lor' (108, 1000261) lor Lor LOR lOr
+289 b'.\n' (46, 1000010) .
+ .
+ .
+ .
+
+290 b'ing' (260, 1000103) ing Ing ING inG
+291 b'es' (101, 1000115) es Es ES eS
+292 b'tri' (116, 1000272) tri Tri TRI tRi
+293 b'ig' (105, 1000103) ig Ig IG iG
+294 b'tay' (116, 1000278) tay Tay TAY tAy
+295 b'taylor' (294, 1000288) taylor Taylor TAYLOR tayLor
+296 b'eved' (101, 1000273) eved Eved EVED eVed
+297 b'retri' (268, 1000292) retri Retri RETRI reTri
+298 b'retrieved' (297, 1000296) retrieved Retrieved RETRIEVED retriEved
+299 b'ic' (105, 1000099) ic Ic IC iC
