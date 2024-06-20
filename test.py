@@ -63,16 +63,19 @@ for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTok
     print(f"Tokenizer {name} training on {filename}.txt:")
     t0 = time.time()
     # construct the Tokenizer object and kick off verbose training
-    tokenizer = TokenizerClass()
-    tokenizer.train(text, 512)
+    tokenizer_train = TokenizerClass()
+    vocab_size = 512
+    tokenizer_train.train(text,vocab_size)
     # writes two files in the models directory: name.model, and name.vocab
     prefix = os.path.join("models", name)
-    # !!! tokenizer.save(prefix)
+    tokenizer_train.save(prefix)
     t1 = time.time()
     print(f"Training {name} took {t1 - t0:.2f} seconds")
     t0 = time.time()
-    # test we can tokenize and detokenize the egg_test_string exactly
-
+    # test we can load and tokenize/detokenize the test strings exactly
+    tokenizer = TokenizerClass()
+    tokenizer.load(prefix + ".model")
+    tokenizer.save(prefix + ".model_comp")
     for text in [egg_test_string, iphone_test_string]:
         print(f"Tokenizer {name} trained on {filename}.txt tested on:\n", text)
         tokenizer_ids = tokenizer.encode(text)
@@ -93,5 +96,8 @@ for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTok
     t1 = time.time()
     print(f"Testing {name} took {t1 - t0:.2f} seconds")
     # print(tokenizer.vocab)
-    for i in range(256, 300):
-        print(i, tokenizer.vocab[i], tokenizer.recursive_vocab[i], tokenizer.decode([i]), tokenizer.decode([i + 1_000_000]), tokenizer.decode([i + 2_000_000]), tokenizer.decode([i + 3_000_000]))
+    for i in range(256, vocab_size):
+        print(i, tokenizer.vocab[i], tokenizer.recursive_vocab[i], [ord(ch) for ch in tokenizer.decode([i])])
+        print(tokenizer.decode([i]).encode("utf-8"))
+        if tokenizer.recursive_vocab[i][0] != 226:
+            print(tokenizer.decode([i]), tokenizer.decode([i + 1_000_000]), tokenizer.decode([i + 2_000_000]), tokenizer.decode([i + 3_000_000]))

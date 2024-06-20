@@ -242,17 +242,30 @@ class Tokenizer:
         """
         # write the model: to be used in load() later
         model_file = file_prefix + ".model"
+        print(f"{model_file=}")
         with open(model_file, 'w') as f:
             # write the version, pattern and merges, that's all that's needed
-            f.write("minbpe v1\n")
+            f.write("minbpe CapitalSpaceOut v1\n")
             f.write(f"{self.pattern}\n")
             # write the special tokens, first the number of them, then each one
             f.write(f"{len(self.special_tokens)}\n")
             for special, idx in self.special_tokens.items():
                 f.write(f"{special} {idx}\n")
             # the merges dict
+            f.write(f"{len(self.merges)}\n")
             for idx1, idx2 in self.merges:
                 f.write(f"{idx1} {idx2}\n")
+
+            f.write(f"{len(self.recursive_vocab)}\n")
+            for i in range(256, len(self.recursive_vocab)):
+                item = self.recursive_vocab[i]
+                f.write(f"{item[0]} {item[1]}\n")
+
+            f.write(f"{len(self.vocab_cnt_ids)}\n")
+            for i in range(256, len(self.vocab_cnt_ids)):
+                item = self.vocab_cnt_ids[i]
+                f.write(f"{item}\n")
+
         # write the vocab: for the human to look at
         vocab_file = file_prefix + ".vocab"
         inverted_merges = {idx: pair for pair, idx in self.merges.items()}
@@ -286,7 +299,7 @@ class Tokenizer:
         with open(model_file, 'r', encoding="utf-8") as f:
             # read the version
             version = f.readline().strip()
-            assert version == "minbpe v1"
+            assert version == "minbpe CapitalSpaceOut v1"
             # read the pattern
             self.pattern = f.readline().strip()
             # read the special tokens
@@ -294,14 +307,34 @@ class Tokenizer:
             for _ in range(num_special):
                 special, special_idx = f.readline().strip().split()
                 special_tokens[special] = int(special_idx)
+
             # read the merges
-            for line in f:
+            num_merges = int(f.readline().strip())
+            for _ in range(num_merges):
+                line = f.readline().strip()
                 idx1, idx2 = map(int, line.split())
                 merges[(idx1, idx2)] = idx
                 idx += 1
-        self.merges = merges
+
+            recursive_vocab = {idx: [idx] for idx in range(256)} # idx -> list of ids
+            num_recursive_vocab = int(f.readline().strip())
+            for i in range(256, num_recursive_vocab):
+                line = f.readline().strip()
+                idx1, idx2 = map(int, line.split())
+                recursive_vocab[i] = (idx1, idx2)
+
+            vocab_cnt_ids = {idx: 1 for idx in range(256)} # idx -> count of ids
+            num_vocab_cnt_ids = int(f.readline().strip())
+            for i in range(256, num_vocab_cnt_ids):
+                line = f.readline().strip()
+                idx = int(line)
+                vocab_cnt_ids[i] = idx
+
         self.special_tokens = special_tokens
+        self.merges = merges
         self.vocab = self._build_vocab()
+        self.recursive_vocab = recursive_vocab # used in decode() - recursive decoding to the individual tokens
+        self.vocab_cnt_ids = vocab_cnt_ids # used in decode() - recursive decoding to the individual tokens
 
 # the main GPT text split patterns, see
 # https://github.com/openai/tiktoken/blob/main/tiktoken_ext/openai_public.py
