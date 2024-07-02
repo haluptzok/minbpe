@@ -256,15 +256,23 @@ class Tokenizer:
             for idx1, idx2 in self.merges:
                 f.write(f"{idx1} {idx2}\n")
 
-            f.write(f"{len(self.recursive_vocab)}\n")
-            for i in range(256, len(self.recursive_vocab)):
-                item = self.recursive_vocab[i]
-                f.write(f"{item[0]} {item[1]}\n")
-
+            # enumerate k,v from vocab_cnt_ids - it's not contiguous with special tokens occurring anywhere
             f.write(f"{len(self.vocab_cnt_ids)}\n")
-            for i in range(256, len(self.vocab_cnt_ids)):
-                item = self.vocab_cnt_ids[i]
-                f.write(f"{item}\n")
+            for k, v in self.vocab_cnt_ids.items():
+                # The first 256 are contiguous and special cased.
+                if k >= 256:
+                    f.write(f"{k} {v}\n")
+
+            # enumerate k,v from recursive_vocab - it's not contiguous with special tokens occurring anywhere
+            f.write(f"{len(self.recursive_vocab)}\n")
+            for k, v in self.recursive_vocab.items():
+                # The first 256 are contiguous and special cased.
+                if k >= 256:
+                    # print("save recursive_vocab", k, v, self.vocab_cnt_ids[k])
+                    if self.vocab_cnt_ids[k] == 1: # special tokens (and 0-255) all map to just 1 token
+                        f.write(f"{k} {v[0]}\n")
+                    else:
+                        f.write(f"{k} {v[0]} {v[1]}\n") # the merged tokens
 
         # write the vocab: for the human to look at
         vocab_file = file_prefix + ".vocab"
@@ -316,19 +324,25 @@ class Tokenizer:
                 merges[(idx1, idx2)] = idx
                 idx += 1
 
-            recursive_vocab = {idx: [idx] for idx in range(256)} # idx -> list of ids
-            num_recursive_vocab = int(f.readline().strip())
-            for i in range(256, num_recursive_vocab):
-                line = f.readline().strip()
-                idx1, idx2 = map(int, line.split())
-                recursive_vocab[i] = (idx1, idx2)
-
             vocab_cnt_ids = {idx: 1 for idx in range(256)} # idx -> count of ids
             num_vocab_cnt_ids = int(f.readline().strip())
             for i in range(256, num_vocab_cnt_ids):
                 line = f.readline().strip()
-                idx = int(line)
-                vocab_cnt_ids[i] = idx
+                key, idx = map(int, line.split())
+                vocab_cnt_ids[key] = idx
+
+            recursive_vocab = {idx: [idx] for idx in range(256)} # idx -> list of ids
+            num_recursive_vocab = int(f.readline().strip())
+            for i in range(256, num_recursive_vocab):
+                line = f.readline().strip()
+                line_split = line.split()
+                # print("load recursive_vocab", i, line, line_split, line_split[0], vocab_cnt_ids[int(line_split[0])])
+                if vocab_cnt_ids[int(line_split[0])] == 1:
+                    key, idx1 = map(int, line_split)
+                    recursive_vocab[key] = (idx1,)
+                else:
+                    key, idx1, idx2 = map(int, line_split)
+                    recursive_vocab[key] = (idx1, idx2)
 
         self.special_tokens = special_tokens
         self.merges = merges
@@ -354,6 +368,12 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         self.compiled_pattern = re.compile(self.pattern)
         self.special_tokens = {}
         self.inverse_special_tokens = {}
+
+        # iteratively merge the most common pairs to create new tokens
+        self.merges = {} # (int, int) -> int
+        self.vocab = {idx: bytes([idx]) for idx in range(256)} # idx -> bytes
+        self.recursive_vocab = {idx: [idx] for idx in range(256)} # idx -> list of ids
+        self.vocab_cnt_ids = {idx: 1 for idx in range(256)} # idx -> count of ids
 
     def merge(self, ids, pair, idx):
         """
@@ -508,6 +528,11 @@ class CapitalSpaceOutTokenizer(Tokenizer):
         # example: {"<|endoftext|>": 100257}
         self.special_tokens = special_tokens
         self.inverse_special_tokens = {v: k for k, v in special_tokens.items()}
+        for k, v in special_tokens.items():
+            # print(f"register_special_tokens {k=} {v=}")
+            self.vocab[v] = k.encode("utf-8")
+            self.vocab_cnt_ids[v] = 1
+            self.recursive_vocab[v] = (v,)
 
     def decode_recursive(self, ids):
         # given ids (list of integers), return Python string
