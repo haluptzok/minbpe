@@ -683,7 +683,9 @@ idx=510 pair=(279, 474) pair_raw=(279, 1000474)
 merge 255/256: (279, 474) -> 510 (b'rolling') had 64 occurrences
 idx=511 pair=(285, 110) pair_raw=(285, 1000110)
 merge 256/256: (285, 110) -> 511 (b'enn') had 63 occurrences
-Training CapitalSpaceOutTokenizer took 36.06 seconds
+model_file='models\\CapitalSpaceOutTokenizer.model'
+Training CapitalSpaceOutTokenizer took 38.61 seconds
+model_file='models\\CapitalSpaceOutTokenizer.model_comp.model'
 Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on:
  
 egg egg egg
@@ -695,6 +697,62 @@ EGg EGg EGg
 EgG EgG EgG
 eGg eGg eGg
 
+[10, 257, 40000257, 40000257, 10, 1000257, 41000257, 41000257, 10, 2000257, 42000257, 42000257, 10, 3000257, 43000257, 43000257, 10, 256, 1000103, 40000256, 1000103, 40000256, 1000103, 10, 2000256, 103, 42000256, 103, 42000256, 103, 10, 1000256, 1000103, 41000256, 1000103, 41000256, 1000103, 10, 3000256, 103, 43000256, 103, 43000256, 103, 10]
+            10 b'\n' [10] 
+
+           257 b'egg' (3000256, 1000103) egg
+      40000257 b'egg' (3000256, 1000103)  egg
+      40000257 b'egg' (3000256, 1000103)  egg
+            10 b'\n' [10] 
+
+       1000257 b'egg' (3000256, 1000103) Egg
+      41000257 b'egg' (3000256, 1000103)  Egg
+      41000257 b'egg' (3000256, 1000103)  Egg
+            10 b'\n' [10] 
+
+       2000257 b'egg' (3000256, 1000103) EGG
+      42000257 b'egg' (3000256, 1000103)  EGG
+      42000257 b'egg' (3000256, 1000103)  EGG
+            10 b'\n' [10] 
+
+       3000257 b'egg' (3000256, 1000103) eGG
+      43000257 b'egg' (3000256, 1000103)  eGG
+      43000257 b'egg' (3000256, 1000103)  eGG
+            10 b'\n' [10] 
+
+           256 b'eg' (101, 1000103) eg
+       1000103 b'g' [103] G
+      40000256 b'eg' (101, 1000103)  eg
+       1000103 b'g' [103] G
+      40000256 b'eg' (101, 1000103)  eg
+       1000103 b'g' [103] G
+            10 b'\n' [10] 
+
+       2000256 b'eg' (101, 1000103) EG
+           103 b'g' [103] g
+      42000256 b'eg' (101, 1000103)  EG
+           103 b'g' [103] g
+      42000256 b'eg' (101, 1000103)  EG
+           103 b'g' [103] g
+            10 b'\n' [10] 
+
+       1000256 b'eg' (101, 1000103) Eg
+       1000103 b'g' [103] G
+      41000256 b'eg' (101, 1000103)  Eg
+       1000103 b'g' [103] G
+      41000256 b'eg' (101, 1000103)  Eg
+       1000103 b'g' [103] G
+            10 b'\n' [10] 
+
+       3000256 b'eg' (101, 1000103) eG
+           103 b'g' [103] g
+      43000256 b'eg' (101, 1000103)  eG
+           103 b'g' [103] g
+      43000256 b'eg' (101, 1000103)  eG
+           103 b'g' [103] g
+            10 b'\n' [10] 
+
+Test String and token Lengths: 97 45
 [10, 257, 40000257, 40000257, 10, 1000257, 41000257, 41000257, 10, 2000257, 42000257, 42000257, 10, 3000257, 43000257, 43000257, 10, 256, 1000103, 40000256, 1000103, 40000256, 1000103, 10, 2000256, 103, 42000256, 103, 42000256, 103, 10, 1000256, 1000103, 41000256, 1000103, 41000256, 1000103, 10, 3000256, 103, 43000256, 103, 43000256, 103, 10]
             10 b'\n' [10] 
 
@@ -842,13 +900,187 @@ iPhoNE IPhoNE IPhoNE
             10 b'\n' [10] 
 
 Test String and token Lengths: 190 67
+[10, 406, 40000406, 40000406, 10, 1000406, 41000406, 41000406, 10, 2000406, 42000406, 42000406, 10, 3000406, 43000406, 43000406, 10, 1000105, 1000402, 41000105, 1000402, 41000105, 1000402, 10, 105, 2000402, 40000105, 2000402, 40000105, 2000402, 10, 105, 1000372, 3000264, 101, 41000105, 1000372, 3000264, 101, 41000105, 1000372, 3000264, 101, 10, 105, 372, 2000337, 40000105, 372, 2000337, 40000105, 372, 2000337, 10, 105, 1000372, 3000264, 1000101, 41000105, 1000372, 3000264, 1000101, 41000105, 1000372, 3000264, 1000101, 10]
+            10 b'\n' [10] 
+
+           406 b'iphone' (105, 1000402) iphone
+      40000406 b'iphone' (105, 1000402)  iphone
+      40000406 b'iphone' (105, 1000402)  iphone
+            10 b'\n' [10] 
+
+       1000406 b'iphone' (105, 1000402) Iphone
+      41000406 b'iphone' (105, 1000402)  Iphone
+      41000406 b'iphone' (105, 1000402)  Iphone
+            10 b'\n' [10] 
+
+       2000406 b'iphone' (105, 1000402) IPHONE
+      42000406 b'iphone' (105, 1000402)  IPHONE
+      42000406 b'iphone' (105, 1000402)  IPHONE
+            10 b'\n' [10] 
+
+       3000406 b'iphone' (105, 1000402) iPhone
+      43000406 b'iphone' (105, 1000402)  iPhone
+      43000406 b'iphone' (105, 1000402)  iPhone
+            10 b'\n' [10] 
+
+       1000105 b'i' [105] I
+       1000402 b'phone' (372, 1000337) Phone
+      41000105 b'i' [105]  I
+       1000402 b'phone' (372, 1000337) Phone
+      41000105 b'i' [105]  I
+       1000402 b'phone' (372, 1000337) Phone
+            10 b'\n' [10] 
+
+           105 b'i' [105] i
+       2000402 b'phone' (372, 1000337) PHONE
+      40000105 b'i' [105]  i
+       2000402 b'phone' (372, 1000337) PHONE
+      40000105 b'i' [105]  i
+       2000402 b'phone' (372, 1000337) PHONE
+            10 b'\n' [10] 
+
+           105 b'i' [105] i
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+           101 b'e' [101] e
+      41000105 b'i' [105]  I
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+           101 b'e' [101] e
+      41000105 b'i' [105]  I
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+           101 b'e' [101] e
+            10 b'\n' [10] 
+
+           105 b'i' [105] i
+           372 b'ph' (112, 1000104) ph
+       2000337 b'one' (264, 1000101) ONE
+      40000105 b'i' [105]  i
+           372 b'ph' (112, 1000104) ph
+       2000337 b'one' (264, 1000101) ONE
+      40000105 b'i' [105]  i
+           372 b'ph' (112, 1000104) ph
+       2000337 b'one' (264, 1000101) ONE
+            10 b'\n' [10] 
+
+           105 b'i' [105] i
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+       1000101 b'e' [101] E
+      41000105 b'i' [105]  I
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+       1000101 b'e' [101] E
+      41000105 b'i' [105]  I
+       1000372 b'ph' (112, 1000104) Ph
+       3000264 b'on' (111, 1000110) oN
+       1000101 b'e' [101] E
+            10 b'\n' [10] 
+
+Test String and token Lengths: 190 67
+Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on:
+ ?
+[63]
+            63 b'?' [63] ?
+Test String and token Lengths: 1 1
+[63]
+            63 b'?' [63] ?
+Test String and token Lengths: 1 1
+Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on:
+ a
+[97]
+            97 b'a' [97] a
+Test String and token Lengths: 1 1
+[97]
+            97 b'a' [97] a
+Test String and token Lengths: 1 1
+Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on:
+ A <|endoftext|> egg <|fim_prefix|> Egg <|fim_middle|> EGG <|fim_suffix|> eGG <|endofprompt|> iPhone
+[1000097, 40000060, 124, 504, 111, 277, 499, 116, 124, 62, 40000257, 40000060, 124, 387, 109, 95, 112, 268, 387, 120, 124, 62, 41000257, 40000060, 124, 387, 109, 95, 109, 399, 100, 318, 124, 62, 42000257, 40000060, 124, 387, 109, 95, 456, 102, 387, 120, 124, 62, 43000257, 40000060, 124, 504, 308, 112, 304, 404, 124, 62, 43000406]
+       1000097 b'a' [97] A
+      40000060 b'<' [60]  <
+           124 b'|' [124] |
+           504 b'end' (285, 1000100) end
+           111 b'o' [111] o
+           277 b'ft' (102, 1000116) ft
+           499 b'ex' (101, 1000120) ex
+           116 b't' [116] t
+           124 b'|' [124] |
+            62 b'>' [62] >
+      40000257 b'egg' (3000256, 1000103)  egg
+      40000060 b'<' [60]  <
+           124 b'|' [124] |
+           387 b'fi' (102, 1000105) fi
+           109 b'm' [109] m
+            95 b'_' [95] _
+           112 b'p' [112] p
+           268 b're' (114, 1000101) re
+           387 b'fi' (102, 1000105) fi
+           120 b'x' [120] x
+           124 b'|' [124] |
+            62 b'>' [62] >
+      41000257 b'egg' (3000256, 1000103)  Egg
+      40000060 b'<' [60]  <
+           124 b'|' [124] |
+           387 b'fi' (102, 1000105) fi
+           109 b'm' [109] m
+            95 b'_' [95] _
+           109 b'm' [109] m
+           399 b'id' (105, 1000100) id
+           100 b'd' [100] d
+           318 b'le' (108, 1000101) le
+           124 b'|' [124] |
+            62 b'>' [62] >
+      42000257 b'egg' (3000256, 1000103)  EGG
+      40000060 b'<' [60]  <
+           124 b'|' [124] |
+           387 b'fi' (102, 1000105) fi
+           109 b'm' [109] m
+            95 b'_' [95] _
+           456 b'su' (115, 1000117) su
+           102 b'f' [102] f
+           387 b'fi' (102, 1000105) fi
+           120 b'x' [120] x
+           124 b'|' [124] |
+            62 b'>' [62] >
+      43000257 b'egg' (3000256, 1000103)  eGG
+      40000060 b'<' [60]  <
+           124 b'|' [124] |
+           504 b'end' (285, 1000100) end
+           308 b'of' (111, 1000102) of
+           112 b'p' [112] p
+           304 b'rom' (279, 1000109) rom
+           404 b'pt' (112, 1000116) pt
+           124 b'|' [124] |
+            62 b'>' [62] >
+      43000406 b'iphone' (105, 1000402)  iPhone
+Test String and token Lengths: 99 57
+[1000097, 32, 100257, 40000257, 32, 100258, 41000257, 32, 100259, 42000257, 32, 100260, 43000257, 32, 100276, 43000406]
+       1000097 b'a' [97] A
+            32 b' ' [32]  
+        100257 b'<|endoftext|>' (100257,) <|endoftext|>
+      40000257 b'egg' (3000256, 1000103)  egg
+            32 b' ' [32]  
+        100258 b'<|fim_prefix|>' (100258,) <|fim_prefix|>
+      41000257 b'egg' (3000256, 1000103)  Egg
+            32 b' ' [32]  
+        100259 b'<|fim_middle|>' (100259,) <|fim_middle|>
+      42000257 b'egg' (3000256, 1000103)  EGG
+            32 b' ' [32]  
+        100260 b'<|fim_suffix|>' (100260,) <|fim_suffix|>
+      43000257 b'egg' (3000256, 1000103)  eGG
+            32 b' ' [32]  
+        100276 b'<|endofprompt|>' (100276,) <|endofprompt|>
+      43000406 b'iphone' (105, 1000402)  iPhone
+Test String and token Lengths: 99 16
 Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on egg.txt::
 Test String and token Lengths: 328982 114830
 Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on input.txt::
 Test String and token Lengths: 1115394 579527
 Tokenizer CapitalSpaceOutTokenizer trained on egg.txt tested on taylorswift.txt::
 Test String and token Lengths: 185561 77751
-Testing CapitalSpaceOutTokenizer took 6.89 seconds
+Testing CapitalSpaceOutTokenizer took 5.41 seconds
 256 b'eg' (101, 1000103) eg Eg EG eG
 257 b'egg' (3000256, 1000103) egg Egg EGG eGG
 258 b'er' (101, 1000114) er Er ER eR
@@ -897,3 +1129,219 @@ Testing CapitalSpaceOutTokenizer took 6.89 seconds
 297 b'retri' (268, 1000292) retri Retri RETRI reTri
 298 b'retrieved' (297, 1000296) retrieved Retrieved RETRIEVED retriEved
 299 b'ic' (105, 1000099) ic Ic IC iC
+300 b'll' (108, 1000108) ll Ll LL lL
+301 b'and' (266, 1000100) and And AND anD
+302 b'as' (97, 1000115) as As AS aS
+303 b'arch' (263, 1000276) arch Arch ARCH arCh
+304 b'rom' (279, 1000109) rom Rom ROM roM
+305 b').' (41, 1000046) ). ). ). ).
+306 b'ember' (287, 1000282) ember Ember EMBER emBer
+307 b'from' (102, 1000304) from From FROM fRom
+308 b'of' (111, 1000102) of Of OF oF
+309 b'orig' (261, 1000293) orig Orig ORIG orIg
+310 b'origin' (309, 1000260) origin Origin ORIGIN origIn
+311 b'ti' (116, 1000105) ti Ti TI tI
+312 b'ived' (105, 1000273) ived Ived IVED iVed
+313 b'original' (310, 1000269) original Original ORIGINAL originAl
+314 b'de' (100, 1000101) de De DE dE
+315 b'ou' (111, 1000117) ou Ou OU oU
+316 b'archived' (303, 1000312) archived Archived ARCHIVED archIved
+317 b'am' (97, 1000109) am Am AM aM
+318 b'le' (108, 1000101) le Le LE lE
+319 b'no' (110, 1000111) no No NO nO
+320 b'ard' (263, 1000100) ard Ard ARD arD
+321 b"'s" (39, 1000115) 's 's 'S 'S
+322 b'is' (105, 1000115) is Is IS iS
+323 b'us' (117, 1000115) us Us US uS
+324 b'ne' (110, 1000101) ne Ne NE nE
+325 b'ill' (105, 1000300) ill Ill ILL iLl
+326 b'.[' (46, 1000091) .[ .[ .[ .[
+327 b'ly' (108, 1000121) ly Ly LY lY
+328 b'se' (115, 1000101) se Se SE sE
+329 b'ju' (106, 1000117) ju Ju JU jU
+330 b'for' (102, 1000261) for For FOR fOr
+331 b'her' (104, 1000258) her Her HER hEr
+332 b'it' (105, 1000116) it It IT iT
+333 b'ion' (105, 1000264) ion Ion ION iOn
+334 b'oc' (111, 1000099) oc Oc OC oC
+335 b'um' (117, 1000109) um Um UM uM
+336 b'sh' (115, 1000104) sh Sh SH sH
+337 b'one' (264, 1000101) one One ONE onE
+338 b'ary' (263, 1000121) ary Ary ARY arY
+339 b'au' (97, 1000117) au Au AU aU
+340 b'ur' (117, 1000114) ur Ur UR uR
+341 b'gu' (103, 1000117) gu Gu GU gU
+342 b'bo' (98, 1000111) bo Bo BO bO
+343 b'ac' (97, 1000099) ac Ac AC aC
+344 b'mus' (109, 1000323) mus Mus MUS mUs
+345 b'ap' (97, 1000112) ap Ap AP aP
+346 b'uary' (117, 1000338) uary Uary UARY uAry
+347 b'co' (99, 1000111) co Co CO cO
+348 b'nov' (319, 1000118) nov Nov NOV noV
+349 b'son' (115, 1000264) son Son SON sOn
+350 b'music' (1000344, 3000299) music Music MUSIC MusiC
+351 b'november' (348, 1000306) november November NOVEMBER novEmber
+352 b'be' (98, 1000101) be Be BE bE
+353 b'fe' (102, 1000101) fe Fe FE fE
+354 b'bill' (98, 1000325) bill Bill BILL bIll
+355 b'dec' (314, 1000099) dec Dec DEC deC
+356 b'op' (111, 1000112) op Op OP oP
+357 b'ad' (97, 1000100) ad Ad AD aD
+358 b'ver' (118, 1000258) ver Ver VER vEr
+359 b'ent' (285, 1000116) ent Ent ENT enT
+360 b'octo' (334, 1000284) octo Octo OCTO ocTo
+361 b'october' (360, 1000282) october October OCTOBER octoBer
+362 b'tr' (116, 1000114) tr Tr TR tR
+363 b'december' (355, 1000306) december December DECEMBER decEmber
+364 b'billbo' (354, 1000342) billbo Billbo BILLBO billBo
+365 b'with' (271, 1000262) with With WITH wiTh
+366 b'billboard' (364, 1000320) billboard Billboard BILLBOARD billboArd
+367 b'ie' (105, 1000101) ie Ie IE iE
+368 b've' (118, 1000101) ve Ve VE vE
+369 b'she' (336, 1000101) she She SHE shE
+370 b'10' (49, 1000048) 10 10 10 10
+371 b'lo' (108, 1000111) lo Lo LO lO
+372 b'ph' (112, 1000104) ph Ph PH pH
+373 b'me' (109, 1000101) me Me ME mE
+374 b'rec' (268, 1000099) rec Rec REC reC
+375 b'alb' (269, 1000098) alb Alb ALB alB
+376 b'rit' (272, 1000116) rit Rit RIT riT
+377 b'oun' (315, 1000110) oun Oun OUN ouN
+378 b'album' (375, 1000335) album Album ALBUM albUm
+379 b'200' (259, 1000048) 200 200 200 200
+380 b'july' (329, 1000327) july July JULY juLy
+381 b'ation' (283, 1000333) ation Ation ATION atIon
+382 b'song' (349, 1000103) song Song SONG sonG
+383 b'ear' (101, 1000263) ear Ear EAR eAr
+384 b'augu' (339, 1000341) augu Augu AUGU auGu
+385 b'august' (384, 1000270) august August AUGUST auguSt
+386 b'][' (93, 1000091) ][ ][ ][ ][
+387 b'fi' (102, 1000105) fi Fi FI fI
+388 b'li' (108, 1000105) li Li LI lI
+389 b'new' (324, 1000119) new New NEW neW
+390 b'br' (98, 1000114) br Br BR bR
+391 b'aw' (97, 1000119) aw Aw AW aW
+392 b'sp' (115, 1000112) sp Sp SP sP
+393 b'ma' (109, 1000097) ma Ma MA mA
+394 b'ts' (116, 1000115) ts Ts TS tS
+395 b'ld' (108, 1000100) ld Ld LD lD
+396 b'ge' (103, 1000101) ge Ge GE gE
+397 b'ho' (104, 1000111) ho Ho HO hO
+398 b'sing' (115, 1000290) sing Sing SING sIng
+399 b'id' (105, 1000100) id Id ID iD
+400 b'we' (119, 1000101) we We WE wE
+401 b'june' (329, 1000324) june June JUNE juNe
+402 b'phone' (372, 1000337) phone Phone PHONE phOne
+403 b'19' (49, 1000057) 19 19 19 19
+404 b'pt' (112, 1000116) pt Pt PT pT
+405 b'award' (391, 1000320) award Award AWARD awArd
+406 b'iphone' (105, 1000402) iphone Iphone IPHONE iPhone
+407 b'ord' (261, 1000100) ord Ord ORD orD
+408 b'mo' (109, 1000111) mo Mo MO mO
+409 b'te' (116, 1000101) te Te TE tE
+410 b'may' (109, 1000278) may May MAY mAy
+411 b',[' (44, 1000091) ,[ ,[ ,[ ,[
+412 b'febr' (353, 1000390) febr Febr FEBR feBr
+413 b'february' (412, 1000346) february February FEBRUARY febrUary
+414 b'ce' (99, 1000101) ce Ce CE cE
+415 b'con' (99, 1000264) con Con CON cOn
+416 b'apri' (345, 1000272) apri Apri APRI apRi
+417 b'april' (416, 1000108) april April APRIL apriL
+418 b'ke' (107, 1000101) ke Ke KE kE
+419 b'ers' (258, 1000115) ers Ers ERS erS
+420 b'sept' (328, 1000404) sept Sept SEPT sePt
+421 b'september' (420, 1000306) september September SEPTEMBER septEmber
+422 b'coun' (99, 1000377) coun Coun COUN cOun
+423 b'art' (263, 1000116) art Art ART arT
+424 b'gr' (103, 1000114) gr Gr GR gR
+425 b'wh' (119, 1000104) wh Wh WH wH
+426 b'ess' (291, 1000115) ess Ess ESS esS
+427 b'man' (109, 1000266) man Man MAN mAn
+428 b'all' (269, 1000108) all All ALL alL
+429 b'try' (362, 1000121) try Try TRY trY
+430 b'jan' (106, 1000266) jan Jan JAN jAn
+431 b'writ' (119, 1000376) writ Writ WRIT wRit
+432 b'igh' (293, 1000104) igh Igh IGH igH
+433 b'tist' (311, 1000270) tist Tist TIST tiSt
+434 b'13' (49, 1000051) 13 13 13 13
+435 b'year' (121, 1000383) year Year YEAR yEar
+436 b'january' (430, 1000346) january January JANUARY janUary
+437 b'tour' (284, 1000340) tour Tour TOUR toUr
+438 b'record' (374, 1000407) record Record RECORD recOrd
+439 b'per' (112, 1000258) per Per PER pEr
+440 b'artist' (263, 1000433) artist Artist ARTIST arTist
+441 b'country' (422, 1000429) country Country COUNTRY counTry
+442 b'21' (50, 1000049) 21 21 21 21
+443 b'march' (109, 1000303) march March MARCH mArch
+444 b'un' (117, 1000110) un Un UN uN
+445 b'ut' (117, 1000116) ut Ut UT uT
+446 b'ol' (111, 1000108) ol Ol OL oL
+447 b'ist' (105, 1000270) ist Ist IST iSt
+448 b'\xe2\x80' (226, 1000128) b'\xef\xbf\xbd' b'\xef\xbf\xbd' b'\xef\xbf\xbd' b'\xef\xbf\xbd'
+449 b'23' (50, 1000051) 23 23 23 23
+450 b'pop' (112, 1000356) pop Pop POP pOp
+451 b'was' (119, 1000302) was Was WAS wAs
+452 b'ter' (116, 1000258) ter Ter TER tEr
+453 b'ia' (105, 1000097) ia Ia IA iA
+454 b'eric' (258, 1000299) eric Eric ERIC erIc
+455 b'18' (49, 1000056) 18 18 18 18
+456 b'su' (115, 1000117) su Su SU sU
+457 b'so' (115, 1000111) so So SO sO
+458 b'ian' (105, 1000266) ian Ian IAN iAn
+459 b'12' (49, 1000050) 12 12 12 12
+460 b'by' (98, 1000121) by By BY bY
+461 b'americ' (317, 1000454) americ Americ AMERIC amEric
+462 b'24' (50, 1000052) 24 24 24 24
+463 b'our' (315, 1000114) our Our OUR ouR
+464 b']\n' (93, 1000010) ]
+ ]
+ ]
+ ]
+
+465 b'17' (49, 1000055) 17 17 17 17
+466 b'22' (50, 1000050) 22 22 22 22
+467 b'14' (49, 1000052) 14 14 14 14
+468 b'ul' (117, 1000108) ul Ul UL uL
+469 b'vi' (118, 1000105) vi Vi VI vI
+470 b'songwrit' (382, 1000431) songwrit Songwrit SONGWRIT songWrit
+471 b'wo' (119, 1000111) wo Wo WO wO
+472 b'tion' (311, 1000264) tion Tion TION tiOn
+473 b'american' (461, 1000266) american American AMERICAN americAn
+474 b'lling' (300, 1000290) lling Lling LLING llIng
+475 b'awards' (405, 1000115) awards Awards AWARDS awardS
+476 b'wor' (119, 1000261) wor Wor WOR wOr
+477 b'ow' (111, 1000119) ow Ow OW oW
+478 b'11' (49, 1000049) 11 11 11 11
+479 b'di' (100, 1000105) di Di DI dI
+480 b'com' (347, 1000109) com Com COM coM
+481 b'ir' (105, 1000114) ir Ir IR iR
+482 b'tim' (311, 1000109) tim Tim TIM tiM
+483 b'my' (109, 1000121) my My MY mY
+484 b'fir' (387, 1000114) fir Fir FIR fiR
+485 b'00' (48, 1000048) 00 00 00 00
+486 b'ab' (97, 1000098) ab Ab AB aB
+487 b'26' (50, 1000054) 26 26 26 26
+488 b'29' (50, 1000057) 29 29 29 29
+489 b'15' (49, 1000053) 15 15 15 15
+490 b'pro' (112, 1000279) pro Pro PRO pRo
+491 b'ther' (262, 1000258) ther Ther THER thEr
+492 b'ak' (97, 1000107) ak Ak AK aK
+493 b'first' (484, 1000270) first First FIRST firSt
+494 b'25' (50, 1000053) 25 25 25 25
+495 b'27' (50, 1000055) 27 27 27 27
+496 b'ine' (260, 1000101) ine Ine INE inE
+497 b'el' (101, 1000108) el El EL eL
+498 b'are' (3000263, 101) are Are ARE aRe
+499 b'ex' (101, 1000120) ex Ex EX eX
+500 b'jo' (106, 1000111) jo Jo JO jO
+501 b'has' (104, 1000302) has Has HAS hAs
+502 b'top' (284, 1000112) top Top TOP toP
+503 b'stone' (270, 1000337) stone Stone STONE stOne
+504 b'end' (285, 1000100) end End END enD
+505 b'30' (51, 1000048) 30 30 30 30
+506 b'time' (311, 1000373) time Time TIME tiMe
+507 b'that' (262, 1000283) that That THAT thAt
+508 b'ated' (283, 1000265) ated Ated ATED atEd
+509 b'vie' (118, 1000367) vie Vie VIE vIe
+510 b'rolling' (279, 1000474) rolling Rolling ROLLING roLling
+511 b'enn' (285, 1000110) enn Enn ENN enN
