@@ -242,7 +242,7 @@ class Tokenizer:
         """
         # write the model: to be used in load() later
         model_file = file_prefix + ".model"
-        print(f"{model_file=}")
+        print(f"{model_file=}", model_file)
         with open(model_file, 'w') as f:
             # write the version, pattern and merges, that's all that's needed
             f.write("minbpe CapitalSpaceOut v1\n")

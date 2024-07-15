@@ -70,8 +70,8 @@ special_tokens = {
     '<|endofprompt|>': 100276
 }
 
-for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTokenizer"]):
-# for TokenizerClass, name in zip([RegexTokenizer, CapitalSpaceOutTokenizer], ["RegExTokenizer", "CapitalSpaceOutTokenizer"]):
+# for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTokenizer"]):
+for TokenizerClass, name in zip([RegexTokenizer, CapitalSpaceOutTokenizer], ["RegExTokenizer", "CapitalSpaceOutTokenizer"]):
 # for TokenizerClass, name in zip([RegexTokenizer], ["RegExTokenizer"]):
     print(f"Tokenizer {name} training on {filename}.txt:")
     t0 = time.time()
@@ -96,14 +96,14 @@ for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTok
         tokenizer_ids = tokenizer.encode(text, "none")
         print(tokenizer_ids)
         for token in tokenizer_ids:
-            print(f'{token:14d}', tokenizer.vocab[token % 1_000_000], tokenizer.recursive_vocab[token % 1_000_000] if tokenizer.recursive_vocab != None else 0, tokenizer.decode([token]))
+            print(f'{token:14d}', tokenizer.vocab[token % 1_000_000], tokenizer.recursive_vocab[token % 1_000_000] if hasattr(tokenizer, "recursive_vocab") else 0, tokenizer.decode([token]))
         tokenizer_str = tokenizer.decode(tokenizer_ids)
         print("Test String and token Lengths:", len(text), len(tokenizer_ids))
         assert tokenizer_str == text
         tokenizer_ids = tokenizer.encode(text, 'all')
         print(tokenizer_ids)
         for token in tokenizer_ids:
-            print(f'{token:14d}', tokenizer.vocab[token % 1_000_000], tokenizer.recursive_vocab[token % 1_000_000] if tokenizer.recursive_vocab != None else 0, tokenizer.decode([token]))
+            print(f'{token:14d}', tokenizer.vocab[token % 1_000_000], tokenizer.recursive_vocab[token % 1_000_000] if hasattr(tokenizer, "recursive_vocab") else 0, tokenizer.decode([token]))
         tokenizer_str = tokenizer.decode(tokenizer_ids)
         print("Test String and token Lengths:", len(text), len(tokenizer_ids))
         assert tokenizer_str == text
@@ -122,7 +122,10 @@ for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTok
     print(f"Testing {name} took {t1 - t0:.2f} seconds")
     # print(tokenizer.vocab)
     for i in range(256, vocab_size):
-        if tokenizer.recursive_vocab[i][0] != 226:
-           print(i, tokenizer.vocab[i], tokenizer.recursive_vocab[i], tokenizer.decode([i]), tokenizer.decode([i + 1_000_000]), tokenizer.decode([i + 2_000_000]), tokenizer.decode([i + 3_000_000]))
+        if hasattr(tokenizer, "recursive_vocab"):
+            if tokenizer.recursive_vocab[i][0] != 226:
+                print(i, tokenizer.vocab[i], tokenizer.recursive_vocab[i], tokenizer.decode([i]), tokenizer.decode([i + 1_000_000]), tokenizer.decode([i + 2_000_000]), tokenizer.decode([i + 3_000_000]))
+            else:
+                print(i, tokenizer.vocab[i], tokenizer.recursive_vocab[i], tokenizer.decode([i]).encode("utf-8"), tokenizer.decode([i + 1_000_000]).encode("utf-8"), tokenizer.decode([i + 2_000_000]).encode("utf-8"), tokenizer.decode([i + 3_000_000]).encode("utf-8"))
         else:
-            print(i, tokenizer.vocab[i], tokenizer.recursive_vocab[i], tokenizer.decode([i]).encode("utf-8"), tokenizer.decode([i + 1_000_000]).encode("utf-8"), tokenizer.decode([i + 2_000_000]).encode("utf-8"), tokenizer.decode([i + 3_000_000]).encode("utf-8"))
+            print(i, tokenizer.vocab[i], tokenizer.decode([i]))
