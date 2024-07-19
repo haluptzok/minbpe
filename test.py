@@ -70,8 +70,8 @@ special_tokens = {
     '<|endofprompt|>': 100276
 }
 
-# for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTokenizer"]):
-for TokenizerClass, name in zip([RegexTokenizer, CapitalSpaceOutTokenizer], ["RegExTokenizer", "CapitalSpaceOutTokenizer"]):
+for TokenizerClass, name in zip([CapitalSpaceOutTokenizer], ["CapitalSpaceOutTokenizer"]):
+# for TokenizerClass, name in zip([RegexTokenizer, CapitalSpaceOutTokenizer], ["RegExTokenizer", "CapitalSpaceOutTokenizer"]):
 # for TokenizerClass, name in zip([RegexTokenizer], ["RegExTokenizer"]):
     print(f"Tokenizer {name} training on {filename}.txt:")
     t0 = time.time()
@@ -107,8 +107,6 @@ for TokenizerClass, name in zip([RegexTokenizer, CapitalSpaceOutTokenizer], ["Re
         tokenizer_str = tokenizer.decode(tokenizer_ids)
         print("Test String and token Lengths:", len(text), len(tokenizer_ids))
         assert tokenizer_str == text
-
-
 
     # test we can tokenize and detokenize the training sets exactly
     for training_set in ["egg", "input", "taylorswift"]:
