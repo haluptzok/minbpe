@@ -8,7 +8,7 @@ Done: 3> Add test.py to test the code
 Done: 4> Add test case to test.py to the count of tokens for egg, Egg, EGG example from Karpathy on all tokenizers
 Done: 5> Make capital_space_out.py work with no changes - just new names
 Done: 6> Add test capital_space_out.py to test the code and test.py
-6> Make tokenization create tokens = token + 1M * capitalization + 10M * space.  Instead of just token - check it works.
+Done: 6> Make tokenization create tokens = token + 1M * capitalization + 10M * space.  Instead of just token - check it works.
 6> Make space and capitalization indepenent of each other - both or neither can be invoked.
 7> Make capital_space_out.py work with new token indexes, 1M * capital_index
 8> Make capital_space_out.py work with new token indexes, 10M * space_index
